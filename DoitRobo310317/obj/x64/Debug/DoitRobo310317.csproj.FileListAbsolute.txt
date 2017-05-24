@@ -1,0 +1,37 @@
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\cvextern.dll
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\opencv_ffmpeg310_64.dll
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\vcruntime140.dll
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\DoitRobo310317.exe.config
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\DoitRobo310317.exe
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\DoitRobo310317.pdb
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\Emgu.CV.UI.dll
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\Emgu.CV.UI.GL.dll
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\Emgu.CV.World.dll
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\OpenTK.dll
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\OpenTK.GLControl.dll
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\ZedGraph.dll
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\Emgu.CV.UI.xml
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\Emgu.CV.UI.GL.xml
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\Emgu.CV.World.xml
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\OpenTK.xml
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\bin\x64\Debug\OpenTK.GLControl.xml
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.Form1.resources
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.Properties.Resources.resources
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.csproj.GenerateResource.Cache
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.exe
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.pdb
+c:\users\danie\documents\visual studio 2017\Projects\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.csprojResolveAssemblyReference.cache
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\cvextern.dll
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.Form1.resources
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.Properties.Resources.resources
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.csproj.GenerateResource.Cache
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\opencv_ffmpeg310_64.dll
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\vcruntime140.dll
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\DoitRobo310317.exe.config
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\DoitRobo310317.exe
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\DoitRobo310317.pdb
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\zxing.dll
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\zxing.pdb
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.exe
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.pdb
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.csprojResolveAssemblyReference.cache
