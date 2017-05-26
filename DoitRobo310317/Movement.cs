@@ -8,12 +8,17 @@ namespace DoitRobo310317
 {
     class Movement
     {
+        public string ObjectType { get; set; }
+ 
+        public int Frame { get; set; }
+
         public int X { get; set; }
         public int Y { get; set; }
         public float Angle { get; set; }
 
-        public Movement(int X, int Y, float Angle)
+        public Movement(string ObjectType, int X, int Y, float Angle)
         {
+            this.ObjectType = ObjectType;
             this.X = X;
             this.Y = Y;
             this.Angle = Angle;
@@ -21,7 +26,7 @@ namespace DoitRobo310317
 
         public override string ToString()
         {
-            return String.Format("X {0} Y {1} Angle {2:0.00}°", this.X, this.Y, this.Angle);
+            return String.Format("{0}: X {1} Y {2} Angle {3:0.00}° Frame: {4}", this.ObjectType, this.X, this.Y, this.Angle, this.Frame);
         }
 
         //TODO Koordinatentransformation

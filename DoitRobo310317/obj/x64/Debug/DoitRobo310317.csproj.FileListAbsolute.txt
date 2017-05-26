@@ -35,3 +35,17 @@ C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\Doit
 C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.exe
 C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.pdb
 C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.csprojResolveAssemblyReference.cache
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\cvextern.dll
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\opencv_ffmpeg310_64.dll
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\vcruntime140.dll
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\DoitRobo310317.exe.config
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\DoitRobo310317.exe
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\DoitRobo310317.pdb
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\zxing.dll
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\zxing.pdb
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.csprojResolveAssemblyReference.cache
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.Form1.resources
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.Properties.Resources.resources
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.csproj.GenerateResource.Cache
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.exe
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.pdb

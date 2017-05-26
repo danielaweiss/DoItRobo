@@ -37,6 +37,8 @@ namespace DoitRobo310317
 
         private List<Movement> movements = new List<Movement>();
 
+        private int frameCount = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -78,10 +80,41 @@ namespace DoitRobo310317
 
         public void processFrame(object sender, EventArgs e)
         {
-
             // Aktuelles Bild -- Ab hier beginnt die Auswertung und die Erkennung des QR Codes
             Emgu.CV.Mat image = new Mat();
             video_capture.Read(image);
+
+            Movement objectMovement = TrackObject(image);
+            Tuple<Movement, Movement> gloveMovement = gloveRecognized(image);
+
+            if (start)
+            {
+                int frameNumber = frameCount++;
+
+                if (objectMovement != null)
+                {
+                    objectMovement.Frame = frameNumber;
+                    this.movements.Add(objectMovement);
+                }
+                Movement red = gloveMovement.Item1;
+                Movement green = gloveMovement.Item2;
+                if(red != null)
+                {
+                    red.Frame = frameNumber;
+                    this.movements.Add(red);
+                }
+                if(green != null)
+                {
+                    green.Frame = frameNumber;
+                    this.movements.Add(green);
+                }
+            }
+            this.imageBox1.Image = image;
+        }
+
+        private Movement TrackObject(Mat image)
+        {
+
             Mat original = image.Clone();
 
             Emgu.CV.Mat gray = new Mat();
@@ -95,16 +128,16 @@ namespace DoitRobo310317
 
             List<Mark> markerslist = new List<Mark>();
 
-            for(int i = 0; i < contours.Size; i++)
+            for (int i = 0; i < contours.Size; i++)
             {
                 VectorOfPoint contour = contours[i];
-                if(CvInvoke.ContourArea(contour) < 100)
+                if (CvInvoke.ContourArea(contour) < 100)
                 {
                     continue;
                 }
 
                 var moments = CvInvoke.Moments(contour);
-                
+
                 if (moments.M00 > 0)
                 {
                     int cx = Convert.ToInt32(moments.M10 / moments.M00);
@@ -118,13 +151,14 @@ namespace DoitRobo310317
                     {
                         int k = i;
                         int nestedContoursCount = 0;
-                        while (hierachy[k,2]!= -1)
+                        while (hierachy[k, 2] != -1)
                         {
-                            k = hierachy[k,2];
+                            k = hierachy[k, 2];
                             nestedContoursCount++;
                         }
 
-                        if (hierachy[k,2] != -1){
+                        if (hierachy[k, 2] != -1)
+                        {
                             nestedContoursCount++;
                         }
 
@@ -140,7 +174,7 @@ namespace DoitRobo310317
 
                             markerslist.Add(marker);
 
-                            
+
                             MCvScalar color = new MCvScalar(0, 12, 255);
                             CvInvoke.DrawContours(image, contours, i, color, 2);
                             CvInvoke.Circle(image, new Point(cx, cy), 1, color, 2);
@@ -195,7 +229,7 @@ namespace DoitRobo310317
                 if (markerA == null)
                 {
                     this.imageBox1.Image = image;
-                    return;
+                    return null;
                 }
 
                 Point[] cornercandiates = new Point[12];
@@ -234,13 +268,13 @@ namespace DoitRobo310317
 
                 int width = 480;
                 int height = 480;
-                
-                Mat dst = new Mat(width, height, Emgu.CV.CvEnum.DepthType.Cv8U,3);
+
+                Mat dst = new Mat(width, height, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
                 PointF[] dstPoints = new PointF[4];
                 dstPoints[0] = new PointF(0, 0);
                 dstPoints[1] = new PointF(480, 0);
                 dstPoints[2] = new PointF(0, 480);
-                dstPoints[3] = new PointF(480,480);
+                dstPoints[3] = new PointF(480, 480);
 
                 Point[] cornerssort = sortPoints(corners);
 
@@ -248,7 +282,7 @@ namespace DoitRobo310317
                 int offset = 15;
 
                 //cornerssort[3] = new PointF(cornerssort[2].X, cornerssort[1].Y);
-               
+
                 cornerssort[0].X = cornerssort[0].X - offset;
                 cornerssort[0].Y = cornerssort[0].Y - offset;
 
@@ -260,12 +294,12 @@ namespace DoitRobo310317
 
                 cornerssort[3].X = cornerssort[3].X + offset;
                 cornerssort[3].Y = cornerssort[3].Y + offset;
-               
 
 
 
-                Mat transformMat = CvInvoke.GetPerspectiveTransform(convertToPointF(cornerssort),dstPoints);
-                CvInvoke.WarpPerspective(original, dst, transformMat, new Size(480,480));
+
+                Mat transformMat = CvInvoke.GetPerspectiveTransform(convertToPointF(cornerssort), dstPoints);
+                CvInvoke.WarpPerspective(original, dst, transformMat, new Size(480, 480));
 
                 /*
                  * QR-CODE DEKODIEREN
@@ -277,12 +311,12 @@ namespace DoitRobo310317
                     BinaryBitmap candidate = new BinaryBitmap(new HybridBinarizer(source));
                     Result result = reader.decode(candidate, decoderhints);
 
-                    tbQR.Text =  result.Text;
+                    tbQR.Text = result.Text;
                 }
-                catch(ReaderException ex)
+                catch (ReaderException ex)
                 {
-                    
-                    tbQR.Text="";
+
+                    tbQR.Text = "";
                 }
 
                 /*
@@ -293,9 +327,9 @@ namespace DoitRobo310317
 
 
                 // In welchen Quadranten befindet sich Marker A!!
-                Orientation orientation= Orientation.none;
+                Orientation orientation = Orientation.none;
                 double correction = 0;
-                if (h<0 && s<0)
+                if (h < 0 && s < 0)
                 {
                     orientation = Orientation.OL;
                     if (lineAngle < -45)
@@ -306,13 +340,13 @@ namespace DoitRobo310317
                     {
                         correction = 45;
                     }
-                   
-                    
+
+
                 }
                 else if (h < 0 && s > 0)
                 {
                     orientation = Orientation.OR;
-                    correction = 45 ;
+                    correction = 45;
                 }
                 else if (h > 0 && s < 0)
                 {
@@ -331,14 +365,14 @@ namespace DoitRobo310317
                 tbDebug.AppendText("\r\n Winkel korrigiert: " + Math.Round(((lineAngle + correction)), 2).ToString());
                 tbDebug.AppendText("\r\n Orientation:" + orientation.ToString());
                 tbDebug.AppendText("\r\n Winkel unkorrigiert: " + Math.Round((lineAngle), 2).ToString());
-                tbDebug.AppendText("\r\n h: " + Math.Round(h,2));
-                tbDebug.AppendText("\r\n Steigung: " + Math.Round(s,2));
-                tbDebug.AppendText("\r\n Rotation: " + Math.Round(rotationAngle,2));
+                tbDebug.AppendText("\r\n h: " + Math.Round(h, 2));
+                tbDebug.AppendText("\r\n Steigung: " + Math.Round(s, 2));
+                tbDebug.AppendText("\r\n Rotation: " + Math.Round(rotationAngle, 2));
 
                 // für Robotersteuerung Winkel in eine Liste
                 List<double> angleList = new List<double>();
 
-                if (start== true)
+                if (start == true)
                 {
                     angleList.Add(lineAngle);
                 }
@@ -350,24 +384,17 @@ namespace DoitRobo310317
                 cptemp.Cyitem = 0;
 
                 Mat temp = image.Clone();
-                
+
 
                 //CvInvoke.PutText(image,"Winkel: " + Math.Round((lineAngle),2).ToString(), new System.Drawing.Point(10, 80), Emgu.CV.CvEnum.FontFace.HersheyComplex,1.0,new Bgr(0, 0, 0).MCvScalar);
                 CvInvoke.Circle(image, coordinatestopoints(cp), 5, new Bgr(0, 0, 255).MCvScalar);
-                CvInvoke.PutText(image, "Position: X:" + cp.Cxitem.ToString()+ " Y:" + cp.Cyitem.ToString(), new System.Drawing.Point(10, 50), Emgu.CV.CvEnum.FontFace.HersheyComplex, 1.0, new Bgr(0, 0, 0).MCvScalar);
-               
+                CvInvoke.PutText(image, "Position: X:" + cp.Cxitem.ToString() + " Y:" + cp.Cyitem.ToString(), new System.Drawing.Point(10, 50), Emgu.CV.CvEnum.FontFace.HersheyComplex, 1.0, new Bgr(0, 0, 0).MCvScalar);
+
                 this.imageBoxQr.Image = dst;
-                if (start)
-                {
-                    this.movements.Add(new Movement((int)(cp.Cxitem), (int)cp.Cyitem, (float)rotationAngle));
-                }
+
+                return new Movement(tbQR.Text, (int)(cp.Cxitem), (int)cp.Cyitem, (float)rotationAngle);
             }
-            this.imageBox1.Image = image;
-            //Ende QR Code
-
-           
-
-
+            return null;
         }
 
         private PointF[] convertToPointF(Point[] toConvert)
@@ -587,6 +614,113 @@ namespace DoitRobo310317
 
             return cornersort;
         }
+
+
+        /******************
+         * Handschuhtracking
+         ******************/
+         /****
+          * Farbraum in HSV-Color umwandlen, damit der Code robuster und weniger Licht anfällig ist
+          * Masken erstellen um die Farben zu trennen - und bitweise verknüpfen, so dass nur mehr die Farben übrig bleiben! 
+          * Kontouren erkennen - um Schwerpunkt zu berechnen
+          ****/
+
+        private Tuple<Movement, Movement> gloveRecognized(Mat image)
+        {
+            Mat work = image.Clone();
+            CvInvoke.MedianBlur(work, work, 15);
+            CvInvoke.GaussianBlur(work,work,new Size(5,5),5);
+
+            // konvertieren in HSV FUll (0-360°)
+            Mat hsv = new Mat();
+            CvInvoke.CvtColor(work, hsv, Emgu.CV.CvEnum.ColorConversion.Bgr2HsvFull);
+
+            //Masken erstellen
+            //Kuchenstücke von HSV (Grenzen) definieren
+
+            MCvScalar mask_red_lower= new MCvScalar(0,50,50);
+            MCvScalar mask_red_upper = new MCvScalar(13, 255, 255);
+
+            MCvScalar mask_green_lower = new MCvScalar(90, 50, 50);
+            MCvScalar mask_green_upper = new MCvScalar(120, 255, 255);
+
+            //Maske erstellen
+            Mat mask_red = new Mat();
+            Mat mask_green= new Mat();
+
+            CvInvoke.InRange(hsv, new ScalarArray(mask_red_lower), new ScalarArray(mask_red_upper), mask_red);
+            CvInvoke.InRange(hsv, new ScalarArray(mask_green_lower), new ScalarArray(mask_green_upper), mask_green);
+
+            //Kontouren erkennen
+            VectorOfVectorOfPoint red_countours = new VectorOfVectorOfPoint ();
+            VectorOfVectorOfPoint green_countours = new VectorOfVectorOfPoint();
+
+            Mat hierachy_red = new Mat();
+            Mat hierachy_green = new Mat();
+
+            Mat countours = new Mat(work.Rows, work.Cols, Emgu.CV.CvEnum.DepthType.Cv32F, 3);
+
+            CvInvoke.FindContours(mask_red, red_countours, hierachy_red, Emgu.CV.CvEnum.RetrType.Tree,Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.FindContours(mask_green, green_countours, hierachy_green, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+
+            //Filtern, dass nur das größte angezeigt wird
+
+            //Für ROT
+            int idx_largestRed = 0;
+            double Size_largestRed = 0; // Könnte man bei Rot verbessern - auf geringster Abstand zu Grün
+            for (int i = 0; i < red_countours.Size; i++)
+            {
+               double temp= CvInvoke.ContourArea(red_countours[i]);
+                if (temp > Size_largestRed)
+                {
+                    Size_largestRed = temp;
+                    idx_largestRed = i;
+                }
+
+            }
+            //FÜR GRÜN
+            int idx_largestGreen = 0;
+            double Size_largestGreen = 0;
+            for (int i = 0; i < green_countours.Size; i++)
+            {
+                double temp = CvInvoke.ContourArea(green_countours[i]);
+                if (temp > Size_largestGreen)
+                {
+                    Size_largestGreen = temp;
+                    idx_largestGreen = i;
+                }
+
+            }
+
+            Movement greenMove = null;
+            Movement redMove = null;
+            if (red_countours.Size > 0)
+            {
+                Rectangle rect_Red = CvInvoke.BoundingRectangle(red_countours[idx_largestRed]);
+                CvInvoke.Rectangle(countours, rect_Red, new MCvScalar(0, 0, 255), 1, Emgu.CV.CvEnum.LineType.AntiAlias);
+                CvInvoke.DrawContours(countours, red_countours, idx_largestRed, new MCvScalar(0, 0, 255), 2); //ROT
+                redMove = new Movement("Red", rect_Red.X + rect_Red.Width / 2, rect_Red.Y + rect_Red.Height / 2, 0.0f);
+            }
+            if (green_countours.Size > 0)
+            {
+                Rectangle rect_Green = CvInvoke.BoundingRectangle(green_countours[idx_largestGreen]);
+                CvInvoke.Rectangle(countours, rect_Green, new MCvScalar(0, 255, 0), 1, Emgu.CV.CvEnum.LineType.AntiAlias);
+                CvInvoke.DrawContours(countours, green_countours, idx_largestGreen, new MCvScalar(0, 255, 0), 2); //GRÜN
+                greenMove = new Movement("Green", rect_Green.X + rect_Green.Width / 2, rect_Green.Y + rect_Green.Height / 2, 0.0f);
+
+            }
+
+            gloveBox.Image = countours;
+
+            return Tuple.Create(redMove, greenMove);
+        }
+
+        
+
+
+
+
+
         //Teil für die Spracherekennung - hier Ausführung der Sprachbefehle programmieren
         private void CommandRecognized(object sender, SpeechRecognizedEventArgs e)
         {

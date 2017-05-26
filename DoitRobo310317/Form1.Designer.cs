@@ -39,8 +39,11 @@
             this.moveMentsLB = new System.Windows.Forms.CheckedListBox();
             this.btDoSomething = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.gloveBox = new Emgu.CV.UI.ImageBox();
+            this.lblglove = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBoxQr)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gloveBox)).BeginInit();
             this.SuspendLayout();
             // 
             // imageBox1
@@ -130,12 +133,31 @@
             this.label1.TabIndex = 12;
             this.label1.Text = "Movements";
             // 
+            // gloveBox
+            // 
+            this.gloveBox.Location = new System.Drawing.Point(12, 948);
+            this.gloveBox.Name = "gloveBox";
+            this.gloveBox.Size = new System.Drawing.Size(1226, 870);
+            this.gloveBox.TabIndex = 2;
+            this.gloveBox.TabStop = false;
+            // 
+            // lblglove
+            // 
+            this.lblglove.AutoSize = true;
+            this.lblglove.Location = new System.Drawing.Point(12, 898);
+            this.lblglove.Name = "lblglove";
+            this.lblglove.Size = new System.Drawing.Size(247, 29);
+            this.lblglove.TabIndex = 13;
+            this.lblglove.Text = "Handschuherkennung";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1975, 903);
+            this.ClientSize = new System.Drawing.Size(1989, 1834);
+            this.Controls.Add(this.lblglove);
+            this.Controls.Add(this.gloveBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btDoSomething);
             this.Controls.Add(this.moveMentsLB);
@@ -153,6 +175,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBoxQr)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gloveBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -170,6 +193,8 @@
         private System.Windows.Forms.CheckedListBox moveMentsLB;
         private System.Windows.Forms.Button btDoSomething;
         private System.Windows.Forms.Label label1;
+        private Emgu.CV.UI.ImageBox gloveBox;
+        private System.Windows.Forms.Label lblglove;
     }
 }
 
