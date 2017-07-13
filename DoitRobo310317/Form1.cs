@@ -52,6 +52,7 @@ namespace DoitRobo310317
 
         private bool gloveGreen = false;
 
+        Form2 classifierForm = new Form2();
 
         public Form1()
         {
@@ -85,6 +86,7 @@ namespace DoitRobo310317
             SR.RecognizeAsync(RecognizeMode.Multiple);
             lbStatus.ForeColor = Color.Red;
             Application.Idle += processFrame;
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -177,6 +179,15 @@ namespace DoitRobo310317
             qrCodeVisible = false;
             Emgu.CV.Mat gray = new Mat();
             CvInvoke.CvtColor(inputimage, gray, Emgu.CV.CvEnum.ColorConversion.Bgr2Gray);
+            
+
+
+            //Bild Thresholden (damit Unterschiede besser erkannt werden)
+                          
+            CvInvoke.AdaptiveThreshold(gray, gray, 255, AdaptiveThresholdType.MeanC, ThresholdType.BinaryInv, 25, 7);//25
+            //CvInvoke.Threshold(gray, gray, 100, 170, ThresholdType.Binary);//100,170
+            qrBox.Image = gray;
+            
 
             //CvInvoke.MedianBlur(gray, gray, 5);
             //CvInvoke.GaussianBlur(gray, gray, new Size(5, 5), 5);
@@ -188,14 +199,14 @@ namespace DoitRobo310317
             CvInvoke.Canny(gray, edges, 50, 150, 3); //3 muss bleiben, wurde ausgetestet, alles andere ist zu genau
             //CvInvoke.Erode(edges, edges, null, new Point(-1, -1), 1, BorderType.Constant, CvInvoke.MorphologyDefaultBorderValue);
 
-            qrBox.Image = edges;
+           // qrBox.Image = edges;
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
 
             int[,] hierachy = CvInvoke.FindContourTree(edges, contours, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
 
             Mat contoursDebug = new Mat(inputimage.Rows, inputimage.Cols, Emgu.CV.CvEnum.DepthType.Cv32F, 3);
             CvInvoke.DrawContours(contoursDebug, contours, -1, new MCvScalar(255, 255, 255), 1);
-            qrBox.Image = contoursDebug;
+            //qrBox.Image = contoursDebug;
 
 
             List<Mark> markerslist = new List<Mark>();
@@ -386,7 +397,7 @@ namespace DoitRobo310317
                     qrCodeVisible = true;
                     detectedMovement.ObjectType = "Objekt";
                     // TODO QRCode text auswerten
-                    objectColor = "955B09";
+                    objectColor = "955B09";//955B09 //E6C200
 
                 }
                 catch (ReaderException ex)
@@ -873,11 +884,7 @@ namespace DoitRobo310317
                 case "Manny beende die Aufnahme":
                     start = false;
                     //control.changeTool(1);
-                    this.moveMentsLB.Items.Clear();
-                    foreach(Movement m in this.movements)
-                    {
-                        this.moveMentsLB.Items.Add(m);
-                    }
+                 
                     break;
                 
             }
@@ -912,13 +919,111 @@ namespace DoitRobo310317
             {
                 this.start = false;
                 this.buttonRecord.Text = "Start";
-                this.moveMentsLB.Items.Clear();
-                foreach (Movement m in this.movements)
-                {
-                    this.moveMentsLB.Items.Add(m);
-                }
+              
                 
             }
+        }
+
+        private void btDoSomething_Click(object sender, EventArgs e)
+        {
+            List<RobotMovement> translatedMovements = translateMovements(this.movements);
+            
+        }
+
+
+        /****
+         *
+         *Hier werden die Movements in Roboterbewegungen und textuelle Greifen, Drehung... umgewandelt
+         * 
+         ****/
+        private List<RobotMovement> translateMovements(List<Movement> movements)
+        {
+            if (classifierForm.Visible == false)
+            {
+                classifierForm.Show();
+            }
+            classifierForm.tbClassified.Clear();
+            List<RobotMovement> roboMoves = new List<RobotMovement>();
+
+            List<List<Movement>> groupedMovements = movements
+            .GroupBy(e => e.Frame)
+            .Select(grp => grp.ToList())
+            .OrderBy(lm => lm.First().Frame)
+            .ToList();
+
+            for (int current = 0; current < groupedMovements.Count; current++)
+            {
+                List<Movement> currentMovements = groupedMovements.ElementAt(current);
+                List<Movement> previousMovements = new List<Movement>();
+                List<Movement> nextMovements = new List<Movement>();
+
+                if(current > 0)
+                {
+                    previousMovements = groupedMovements.ElementAt(current - 1);
+                }
+
+                if (current > 0 && current < groupedMovements.Count)
+                {
+                    nextMovements = groupedMovements.ElementAt(current + 1);
+                }
+
+                bool redVisible = false;
+                bool greenVisible = false;
+                bool objectVisible = false;
+
+                Movement red = null;
+                Movement green = null; 
+                Movement obje = null;
+                double length = 0;
+                
+
+                foreach(Movement m in currentMovements)
+                {
+                    if ("Red".Equals(m.ObjectType))
+                    {
+                        redVisible = true;
+                        red = m;
+                    } else if ("Green".Equals(m.ObjectType))
+                    {
+                        greenVisible = true;
+                        green = m;
+                    } else
+                    {
+                        objectVisible = true;
+                        obje = m;
+                    }
+                }
+             
+                if (redVisible && greenVisible && objectVisible)
+                {
+                    // Start classification
+
+                    // Basic movement
+                    RobotMovement move = new RobotMovement();
+                    move.typ = RobotMovement.MovementTyp.MOVE;
+                    float deltax = red.X - green.X;
+                    float deltay = red.Y - green.Y;
+           
+                    length = Math.Sqrt(Math.Pow(deltax, 2) + Math.Pow(deltay, 2));
+                    float centerx = (red.X + green.X) / 2;
+                    float centery = (red.Y + green.Y) / 2;
+                    move.x = centerx;
+                    move.y = centery;
+
+
+
+
+                }
+
+            }
+
+            return roboMoves;
+        }
+
+        private void btNeustart_Click(object sender, EventArgs e)
+        {
+            panelMode.Visible = true;
+            classifierForm.tbClassified.Clear();
         }
     }
 

@@ -35,9 +35,7 @@
             this.QRCode = new System.Windows.Forms.Label();
             this.tbQR = new System.Windows.Forms.TextBox();
             this.tbDebug = new System.Windows.Forms.TextBox();
-            this.moveMentsLB = new System.Windows.Forms.CheckedListBox();
             this.btDoSomething = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.gloveBox = new Emgu.CV.UI.ImageBox();
             this.lblglove = new System.Windows.Forms.Label();
             this.panelMode = new System.Windows.Forms.Panel();
@@ -52,6 +50,7 @@
             this.lbStatus = new System.Windows.Forms.Label();
             this.qrBox = new Emgu.CV.UI.ImageBox();
             this.buttonRecord = new System.Windows.Forms.Button();
+            this.btNeustart = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gloveBox)).BeginInit();
             this.panelMode.SuspendLayout();
@@ -113,31 +112,15 @@
             this.tbDebug.Size = new System.Drawing.Size(363, 563);
             this.tbDebug.TabIndex = 9;
             // 
-            // moveMentsLB
-            // 
-            this.moveMentsLB.FormattingEnabled = true;
-            this.moveMentsLB.Location = new System.Drawing.Point(1249, 73);
-            this.moveMentsLB.Name = "moveMentsLB";
-            this.moveMentsLB.Size = new System.Drawing.Size(728, 754);
-            this.moveMentsLB.TabIndex = 10;
-            // 
             // btDoSomething
             // 
-            this.btDoSomething.Location = new System.Drawing.Point(1754, 850);
+            this.btDoSomething.Location = new System.Drawing.Point(1263, 12);
             this.btDoSomething.Name = "btDoSomething";
             this.btDoSomething.Size = new System.Drawing.Size(223, 62);
             this.btDoSomething.TabIndex = 11;
-            this.btDoSomething.Text = "Tu wat";
+            this.btDoSomething.Text = "klassifizieren";
             this.btDoSomething.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1257, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(137, 29);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "Movements";
+            this.btDoSomething.Click += new System.EventHandler(this.btDoSomething_Click);
             // 
             // gloveBox
             // 
@@ -266,12 +249,23 @@
             this.buttonRecord.UseVisualStyleBackColor = true;
             this.buttonRecord.Click += new System.EventHandler(this.buttonRecord_Click);
             // 
+            // btNeustart
+            // 
+            this.btNeustart.Location = new System.Drawing.Point(1263, 741);
+            this.btNeustart.Name = "btNeustart";
+            this.btNeustart.Size = new System.Drawing.Size(207, 76);
+            this.btNeustart.TabIndex = 24;
+            this.btNeustart.Text = "Neustart";
+            this.btNeustart.UseVisualStyleBackColor = true;
+            this.btNeustart.Click += new System.EventHandler(this.btNeustart_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1989, 1568);
+            this.Controls.Add(this.btNeustart);
             this.Controls.Add(this.buttonRecord);
             this.Controls.Add(this.qrBox);
             this.Controls.Add(this.lbStatus);
@@ -283,9 +277,7 @@
             this.Controls.Add(this.panelMode);
             this.Controls.Add(this.lblglove);
             this.Controls.Add(this.gloveBox);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.btDoSomething);
-            this.Controls.Add(this.moveMentsLB);
             this.Controls.Add(this.tbDebug);
             this.Controls.Add(this.tbQR);
             this.Controls.Add(this.QRCode);
@@ -317,9 +309,7 @@
         private System.Windows.Forms.Label QRCode;
         private System.Windows.Forms.TextBox tbQR;
         private System.Windows.Forms.TextBox tbDebug;
-        private System.Windows.Forms.CheckedListBox moveMentsLB;
         private System.Windows.Forms.Button btDoSomething;
-        private System.Windows.Forms.Label label1;
         private Emgu.CV.UI.ImageBox gloveBox;
         private System.Windows.Forms.Label lblglove;
         private System.Windows.Forms.Panel panelMode;
@@ -334,6 +324,7 @@
         private System.Windows.Forms.Label lbStatus;
         private Emgu.CV.UI.ImageBox qrBox;
         private System.Windows.Forms.Button buttonRecord;
+        private System.Windows.Forms.Button btNeustart;
     }
 }
 

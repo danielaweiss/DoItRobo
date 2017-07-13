@@ -49,3 +49,4 @@ C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\Do
 C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.csproj.GenerateResource.Cache
 C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.exe
 C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.pdb
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.Form2.resources
