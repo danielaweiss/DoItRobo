@@ -20,6 +20,7 @@ using com.google.zxing.qrcode;
 using com.google.zxing.multi;
 using com.google.zxing.oned;
 using Emgu.CV.CvEnum;
+using System.Threading;
 
 namespace DoitRobo310317
 {
@@ -52,10 +53,13 @@ namespace DoitRobo310317
 
         private bool gloveGreen = false;
 
+        private long captureCount = 0;
+
         Form2 classifierForm = new Form2();
 
         public Form1()
         {
+            Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
            
             tbDebug.Text = null;
@@ -85,7 +89,7 @@ namespace DoitRobo310317
             //SR.Enabled = true;
             SR.RecognizeAsync(RecognizeMode.Multiple);
             lbStatus.ForeColor = Color.Red;
-            Application.Idle += processFrame;
+            // Application.Idle += processFrame;
 
         }
 
@@ -102,7 +106,12 @@ namespace DoitRobo310317
             }
             // Aktuelles Bild -- Ab hier beginnt die Auswertung und die Erkennung des QR Codes
             Emgu.CV.Mat image = new Mat();
-            video_capture.Read(image);
+            video_capture.Retrieve(image);
+
+            if (start == true)
+            {
+                captureCount++;
+            }
 
             if (image.IsEmpty && !live && checkBoxLoop.Checked)
             {
@@ -122,6 +131,9 @@ namespace DoitRobo310317
             Tuple<Movement, Movement> gloveMovement = gloveRecognized(inputimage, outputimage);
 
             this.imageBox1.Image = outputimage; //Damit wir immer was sehen können 
+
+            //CvInvoke.Imshow("Test", image);
+
             if (qrCodeVisible & objectConture)
             {
                 this.lbStatus.ForeColor = Color.Green;
@@ -132,7 +144,7 @@ namespace DoitRobo310317
 
             if (objectMovement != null)
             {
-                CvInvoke.PutText(outputimage, "Position: X:" + objectMovement.X + " Y:" + objectMovement.Y, new System.Drawing.Point(10, 50), Emgu.CV.CvEnum.FontFace.HersheyComplex, 1.0, new Bgr(0, 0, 0).MCvScalar);
+                CvInvoke.PutText(outputimage, "Position: X:" + objectMovement.X + " Y:" + objectMovement.Y, new System.Drawing.Point(10, 50), Emgu.CV.CvEnum.FontFace.HersheyComplex, 0.5, new Bgr(0, 0, 0).MCvScalar);
             }
 
             if (start)
@@ -157,6 +169,7 @@ namespace DoitRobo310317
                     this.movements.Add(green);
                 }
             }
+            // image.Dispose();
         }
 
         private Movement TrackObject(Mat inputimage, Mat outputimage)
@@ -167,11 +180,12 @@ namespace DoitRobo310317
             if (!String.IsNullOrEmpty(objectColor))
             {
                 // Colortracking
-                Movement m = trackColored(inputimage, objectColor);
+                Movement m = trackColored(inputimage, objectColor, outputimage);
                 if(m != null)
                 {
                     detectedMovement.X = m.X;
                     detectedMovement.Y = m.Y;
+                    detectedMovement.objectmask = m.objectmask;
                 }
             }
 
@@ -492,12 +506,13 @@ namespace DoitRobo310317
                 return detectedMovement;
                 
             }
+            
             return null;
         }
         /*************************
          * Objekttracking ahand der Farbe
          * *************************/
-        private Movement trackColored(Mat inputimage, string objectColor)
+        private Movement trackColored(Mat inputimage, string objectColor, Mat outputimage)
         {
             Mat work = inputimage.Clone();
 
@@ -520,15 +535,20 @@ namespace DoitRobo310317
 
             CvInvoke.InRange(hsv, new ScalarArray(mask_lower), new ScalarArray(mask_upper), mask);
             BoxMaskObject.Image = mask;
+            
 
             var moments = CvInvoke.Moments(mask,true);
-
+            //Center of gravitiy
             if (moments.M00 > 0)
             {
                 int cx = Convert.ToInt32(moments.M10 / moments.M00);
                 int cy = Convert.ToInt32(moments.M01 / moments.M00);
                 objectConture = true;
-                return new Movement("",cx,cy,-1.0f);
+                CvInvoke.Circle(outputimage, new Point(cx, cy), 3, new Bgr(Color.Pink).MCvScalar, 3);
+                CvInvoke.PutText(outputimage, string.Format("X:{0}, Y:{1}", cx, cy), new System.Drawing.Point(200, 50), Emgu.CV.CvEnum.FontFace.HersheyComplex, 0.5, new Bgr(Color.Blue).MCvScalar);
+                Movement m = new Movement("", cx, cy, -1.0f);
+                m.objectmask = mask;
+                return m;
             } else
             {
                 objectConture = false;
@@ -843,23 +863,51 @@ namespace DoitRobo310317
 
             Movement greenMove = null;
             Movement redMove = null;
+            MCvScalar redcolor = new MCvScalar(0, 0, 255);
+            MCvScalar greencolor = new MCvScalar(0, 255, 0);
             if (red_countours.Size > 0)
             {
                 Rectangle rect_Red = CvInvoke.BoundingRectangle(red_countours[idx_largestRed]);
-                CvInvoke.Rectangle(countours, rect_Red, new MCvScalar(0, 0, 255), 1, Emgu.CV.CvEnum.LineType.AntiAlias);
-                CvInvoke.DrawContours(countours, red_countours, idx_largestRed, new MCvScalar(0, 0, 255), 2); //ROT
+                CvInvoke.Rectangle(countours, rect_Red, redcolor, 1, Emgu.CV.CvEnum.LineType.AntiAlias);
+                CvInvoke.DrawContours(countours, red_countours, idx_largestRed, redcolor, 2); //ROT
                 redMove = new Movement("Red", rect_Red.X + rect_Red.Width / 2, rect_Red.Y + rect_Red.Height / 2, 0.0f);
+
+                CvInvoke.Circle(outputimage, new Point(redMove.X, redMove.Y), 3, redcolor, 3);
+                CvInvoke.PutText(outputimage, string.Format("X:{0}, Y:{1}", redMove.X, redMove.Y), new System.Drawing.Point(10, 80), Emgu.CV.CvEnum.FontFace.HersheyComplex, 0.5, redcolor);
+
+
             }
             if (green_countours.Size > 0)
             {
                 Rectangle rect_Green = CvInvoke.BoundingRectangle(green_countours[idx_largestGreen]);
-                CvInvoke.Rectangle(countours, rect_Green, new MCvScalar(0, 255, 0), 1, Emgu.CV.CvEnum.LineType.AntiAlias);
-                CvInvoke.DrawContours(countours, green_countours, idx_largestGreen, new MCvScalar(0, 255, 0), 2); //GRÜN
+                CvInvoke.Rectangle(countours, rect_Green, greencolor, 1, Emgu.CV.CvEnum.LineType.AntiAlias);
+                CvInvoke.DrawContours(countours, green_countours, idx_largestGreen, greencolor, 2); //GRÜN
                 greenMove = new Movement("Green", rect_Green.X + rect_Green.Width / 2, rect_Green.Y + rect_Green.Height / 2, 0.0f);
+
+
+                CvInvoke.Circle(outputimage, new Point(greenMove.X, greenMove.Y), 3, greencolor,3);
+                CvInvoke.PutText(outputimage, string.Format("X:{0}, Y:{1}", greenMove.X, greenMove.Y), new System.Drawing.Point(10, 110), Emgu.CV.CvEnum.FontFace.HersheyComplex, 0.5, greencolor);
 
             }
 
+
+
+            if (red_countours.Size > 0 && green_countours.Size > 0)
+            {
+                CvInvoke.Line(outputimage, new Point(redMove.X, redMove.Y), new Point(greenMove.X, greenMove.Y), new Bgr(Color.RosyBrown).MCvScalar, 2);
+                float deltax = redMove.X - greenMove.X;
+                float deltay = redMove.Y - greenMove.Y;
+
+                double length = Math.Sqrt(Math.Pow(deltax, 2) + Math.Pow(deltay, 2));
+                int centerx = (redMove.X + greenMove.X) / 2;
+                int centery = (redMove.Y + greenMove.Y) / 2;
+                CvInvoke.PutText(outputimage, string.Format("M: X:{0}, Y:{1} L:{2:F2}", centerx, centery, length), new System.Drawing.Point(10, 140), Emgu.CV.CvEnum.FontFace.HersheyComplex, 0.5, new Bgr(Color.Brown).MCvScalar);
+                CvInvoke.Circle(outputimage, new Point(centerx, centery), 3, new Bgr(Color.Brown).MCvScalar, 3);
+            }
+
             gloveBox.Image = countours;
+
+            
 
             return Tuple.Create(redMove, greenMove);
         }
@@ -899,6 +947,9 @@ namespace DoitRobo310317
                 panelMode.Hide();
                 this.video_capture = new Emgu.CV.VideoCapture(openFileDialog.FileName);
                 checkBoxLoop.Visible = true;
+                this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps, 30);
+                this.video_capture.ImageGrabbed += processFrame;
+                this.video_capture.Start();
             }
         }
 
@@ -907,6 +958,11 @@ namespace DoitRobo310317
             live = true;
             panelMode.Hide();
             this.video_capture = new Emgu.CV.VideoCapture(2);
+            this.video_capture.ImageGrabbed += processFrame;
+            this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps, 10);
+            this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, 640);
+            this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, 480);
+            this.video_capture.Start();
         }
 
         private void buttonRecord_Click(object sender, EventArgs e)
@@ -915,6 +971,7 @@ namespace DoitRobo310317
             {
                 this.start = true;
                 this.buttonRecord.Text = "Stopp";
+                captureCount = 0;
             } else
             {
                 this.start = false;
@@ -951,6 +1008,10 @@ namespace DoitRobo310317
             .OrderBy(lm => lm.First().Frame)
             .ToList();
 
+            int processableFrames = groupedMovements.Where(e => e.Count() == 3).Count();
+
+            lbFrameCount.Text = String.Format("{0};{1}", frameCount, processableFrames);
+
             for (int current = 0; current < groupedMovements.Count; current++)
             {
                 List<Movement> currentMovements = groupedMovements.ElementAt(current);
@@ -962,7 +1023,7 @@ namespace DoitRobo310317
                     previousMovements = groupedMovements.ElementAt(current - 1);
                 }
 
-                if (current > 0 && current < groupedMovements.Count)
+                if (current > 0 && current+1 < groupedMovements.Count)
                 {
                     nextMovements = groupedMovements.ElementAt(current + 1);
                 }
@@ -1011,6 +1072,93 @@ namespace DoitRobo310317
                     move.y = centery;
 
 
+                    //Erkennung von Greifer Auf/ Zu
+
+                    //Prüfung ob Linie zwischen Rot und Grün die Objektmaske schneidet!!
+
+                    bool intersect = intersection(red, green, obje);
+
+                    
+                    if (intersect == true)
+                    {
+                        bool grasp = true;
+                        double prevdistance = length;
+                        // Analyse der nächsten n Frames
+                        for (int i = 1; i < 2; i++)
+                        {
+                            if (current > 0 && current + i < groupedMovements.Count)
+                            {
+                                Movement redloop = null;
+                                Movement greenloop = null;
+                                Movement objeloop = null;
+
+                                //aktuelles Bild + n 
+                                List <Movement> furture = groupedMovements.ElementAt(current + i);
+
+                                //Red, Green, obje herausfiltern
+                               foreach (Movement m in furture)
+                                {
+                                    if ("Red".Equals(m.ObjectType))
+                                    {
+                                        redVisible = true;
+                                        redloop = m;
+                                    }
+                                    else if ("Green".Equals(m.ObjectType))
+                                    {
+                                        greenVisible = true;
+                                        greenloop = m;
+                                    }
+                                    else
+                                    {
+                                        objectVisible = true;
+                                        objeloop = m;
+                                    }
+
+                                    if(greenloop == null || redloop == null || objeloop == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    // schauen ob immer noch Schnitt der Linien zwischen Objekt und Grün und Rot
+                                    bool loopintersect = intersection(redloop, greenloop, objeloop);
+
+                                    //Bestimmung der Distanz
+                                    float deltaxloop = redloop.X - greenloop.X;
+                                    float deltayloop = redloop.Y - greenloop.Y;
+
+                                    double distance = Math.Sqrt(Math.Pow(deltax, 2) + Math.Pow(deltay, 2));
+
+                                    classifierForm.tbClassified.AppendText(String.Format("D1 {0}   D2 {1} \n\n", prevdistance - distance, length - distance));
+                                    if (loopintersect && prevdistance - distance > 0 && length - distance > 0)
+                                    {
+                                        grasp &= true;
+                                    } else
+                                    {
+                                        grasp = grasp & false;
+                                    }
+
+                                    prevdistance = distance;
+                                }
+
+                            }
+                        }
+
+                        if (grasp == true)
+                        {
+                            classifierForm.tbClassified.AppendText("Greifen \n\n");
+                        }
+                    }
+
+
+
+
+
+
+
+                    classifierForm.tbClassified.AppendText(move.convert());
+                    classifierForm.tbClassified.AppendText("\n\n");
+
+
 
 
                 }
@@ -1019,10 +1167,39 @@ namespace DoitRobo310317
 
             return roboMoves;
         }
+        //Prüfung ob Linie zwischen Rot und Grün die Objektmaske schneidet!!
+        private bool intersection(Movement red, Movement green, Movement obje)
+        {
+            bool intersect = false;
+            Mat objemask = obje.objectmask;
 
+            if (objemask != null && red != null && green != null)
+            {
+                Mat lineMat = new Mat(objemask.Rows, objemask.Cols, DepthType.Cv8U, 1);
+                Mat result = new Mat(objemask.Rows, objemask.Cols, DepthType.Cv8U, 1);
+                CvInvoke.Line(lineMat, new Point(red.X, red.Y), new Point(green.X, green.Y), new MCvScalar(255));
+
+                CvInvoke.BitwiseAnd(objemask, lineMat, result);
+
+                return CvInvoke.CountNonZero(result) > 0;
+
+
+
+
+            }            
+            
+
+
+
+            return intersect;
+        }
+
+        
         private void btNeustart_Click(object sender, EventArgs e)
         {
             panelMode.Visible = true;
+            this.video_capture.Stop();
+            this.video_capture.ImageGrabbed -= processFrame;
             classifierForm.tbClassified.Clear();
         }
     }

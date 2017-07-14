@@ -27,12 +27,14 @@ namespace DoitRobo310317
 
         public MovementTyp typ { get; set; }
 
-        private static String template = @"<Sen Type=""DoIt"">
-                                                <Estr>DoIt</Estr>
-                                                <RKorr X=""{0:F4}"" Y=""{1:F4}"" Z=""{2:F4}"" A=""{3:F4}"" B=""{4:F4}"" C=""{5:F4}"" />
-                                                <DiO>{6}</DiO>
-                                                <IPOC>{7}</IPOC>
-                                            </Sen>";
+        private static String template = 
+@"<Sen Type=""DoIt"">
+    <Estr>DoIt</Estr>
+    <RKorr X=""{0:F4}"" Y=""{1:F4}"" Z=""{2:F4}"" A=""{3:F4}"" B=""{4:F4}"" C=""{5:F4}"" />
+    <DiO>{6}</DiO>
+    <IPOC>{7}</IPOC>
+</Sen>";
+
         public String convert()
         {
             String converted = null;

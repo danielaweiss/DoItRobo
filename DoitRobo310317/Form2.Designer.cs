@@ -40,7 +40,8 @@
             this.tbClassified.Location = new System.Drawing.Point(21, 87);
             this.tbClassified.Multiline = true;
             this.tbClassified.Name = "tbClassified";
-            this.tbClassified.Size = new System.Drawing.Size(1261, 830);
+            this.tbClassified.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbClassified.Size = new System.Drawing.Size(1261, 769);
             this.tbClassified.TabIndex = 24;
             // 
             // btClose

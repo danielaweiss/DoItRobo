@@ -51,6 +51,7 @@
             this.qrBox = new Emgu.CV.UI.ImageBox();
             this.buttonRecord = new System.Windows.Forms.Button();
             this.btNeustart = new System.Windows.Forms.Button();
+            this.lbFrameCount = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gloveBox)).BeginInit();
             this.panelMode.SuspendLayout();
@@ -259,12 +260,22 @@
             this.btNeustart.UseVisualStyleBackColor = true;
             this.btNeustart.Click += new System.EventHandler(this.btNeustart_Click);
             // 
+            // lbFrameCount
+            // 
+            this.lbFrameCount.AutoSize = true;
+            this.lbFrameCount.Location = new System.Drawing.Point(1311, 1280);
+            this.lbFrameCount.Name = "lbFrameCount";
+            this.lbFrameCount.Size = new System.Drawing.Size(45, 29);
+            this.lbFrameCount.TabIndex = 25;
+            this.lbFrameCount.Text = "0;0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1989, 1568);
+            this.Controls.Add(this.lbFrameCount);
             this.Controls.Add(this.btNeustart);
             this.Controls.Add(this.buttonRecord);
             this.Controls.Add(this.qrBox);
@@ -325,6 +336,7 @@
         private Emgu.CV.UI.ImageBox qrBox;
         private System.Windows.Forms.Button buttonRecord;
         private System.Windows.Forms.Button btNeustart;
+        private System.Windows.Forms.Label lbFrameCount;
     }
 }
 

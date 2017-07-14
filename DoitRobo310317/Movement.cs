@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Emgu.CV;
+using Emgu.CV.Structure;
+using Emgu.Util;
+using Emgu.CV.Util;
+using Emgu.CV.CvEnum;
 
 namespace DoitRobo310317
 {
@@ -15,6 +20,8 @@ namespace DoitRobo310317
         public int X { get; set; }
         public int Y { get; set; }
         public float Angle { get; set; }
+
+        public Mat objectmask { get; set; }
 
         public Movement(string ObjectType, int X, int Y, float Angle)
         {
