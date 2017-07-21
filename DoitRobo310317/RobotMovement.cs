@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Emgu.CV;
 
 namespace DoitRobo310317
 {
-    class RobotMovement
+    public class RobotMovement
     {
         public enum MovementTyp
         {
             REACH, GRASP, MOVE, RELEASE, ROTATE
+        }
+
+        public RobotMovement()
+        {
+            this.typ = new List<MovementTyp>();
         }
 
         public float x { get; set; }
@@ -25,7 +31,9 @@ namespace DoitRobo310317
 
         public long timestamp { get; set; }
 
-        public MovementTyp typ { get; set; }
+        public List<MovementTyp> typ { get; set; }
+              
+        public Mat imagesource { get; set; }
 
         private static String template = 
 @"<Sen Type=""DoIt"">
@@ -41,6 +49,8 @@ namespace DoitRobo310317
             converted  = String.Format(template, x,y,z,a,b,c,tool, timestamp);
             return converted; 
         }
+
+        
 
     }
 }

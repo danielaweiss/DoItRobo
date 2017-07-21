@@ -23,12 +23,19 @@ namespace DoitRobo310317
 
         public Mat objectmask { get; set; }
 
+        public Mat imagesource { get; set; }
+
         public Movement(string ObjectType, int X, int Y, float Angle)
         {
             this.ObjectType = ObjectType;
             this.X = X;
             this.Y = Y;
             this.Angle = Angle;
+        }
+        public Movement(string ObjectType)
+        {
+            this.ObjectType = ObjectType;
+            
         }
 
         public override string ToString()

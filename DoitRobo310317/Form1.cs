@@ -1,37 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Emgu.CV;
 using Emgu.CV.Structure;
-using Emgu.Util;
 using Emgu.CV.Util;
 using System.Speech.Recognition;
-using com.google.zxing.client;
-using com.google.zxing;
-using com.google.zxing.common;
-using com.google.zxing.qrcode;
-using com.google.zxing.multi;
-using com.google.zxing.oned;
+using ZXing;
+using ZXing.Common;
+using ZXing.Multi;
+using ZXing.QrCode;
 using Emgu.CV.CvEnum;
-using System.Threading;
 
 namespace DoitRobo310317
 {
-    
+
     public partial class Form1 : Form
     {
         // für Sprachsteuerung- allgemeine Variable
         Boolean start = false;
-
+        //hat plötzlich nicht mehr funktioniert :o 
+        //private Reader reader = new ByQuadrantReader(new QRCodeReader());
         private Reader reader = new QRCodeReader();
-        private Hashtable decoderhints = new Hashtable();
+
+
+        private IDictionary<DecodeHintType, object> decoderhints = new Dictionary<DecodeHintType, object>();
 
         private SpeechRecognitionEngine SR;
 
@@ -55,6 +51,7 @@ namespace DoitRobo310317
 
         private long captureCount = 0;
 
+
         Form2 classifierForm = new Form2();
 
         public Form1()
@@ -66,9 +63,7 @@ namespace DoitRobo310317
             
             decoderhints.Add(DecodeHintType.POSSIBLE_FORMATS, BarcodeFormat.QR_CODE);
             decoderhints.Add(DecodeHintType.TRY_HARDER, true);
-
-
-
+            
 
 
             /*
@@ -113,7 +108,7 @@ namespace DoitRobo310317
                 captureCount++;
             }
 
-            if (image.IsEmpty && !live && checkBoxLoop.Checked)
+            if (image.IsEmpty && !live && checkBoxLoop.Checked)//
             {
                 video_capture = new Emgu.CV.VideoCapture(openFileDialog.FileName);
                 return;
@@ -126,6 +121,14 @@ namespace DoitRobo310317
 
             Mat inputimage = image.Clone();
             Mat outputimage = image.Clone();
+            //Einmal QR Code dektieren!
+            if (String.IsNullOrEmpty(objectColor))
+            {
+                detectQrCode(inputimage);
+                imageBox1.Image = inputimage;
+                return;
+            }
+
 
             Movement objectMovement = TrackObject(inputimage,outputimage);
             Tuple<Movement, Movement> gloveMovement = gloveRecognized(inputimage, outputimage);
@@ -168,7 +171,18 @@ namespace DoitRobo310317
                     green.Frame = frameNumber;
                     this.movements.Add(green);
                 }
+
+                if (objectMovement != null && red != null && green != null)
+                {
+                    Movement picture = new Movement("image");
+                    picture.Frame = frameNumber;
+                    Mat resizedoutput= new Mat((int) outputimage.Rows/4, (int) outputimage.Cols/4, outputimage.Depth, outputimage.NumberOfChannels);
+                    CvInvoke.PyrDown(outputimage, resizedoutput);
+                    picture.imagesource = resizedoutput;
+                    this.movements.Add(picture);
+                }
             }
+            
             // image.Dispose();
         }
 
@@ -189,8 +203,8 @@ namespace DoitRobo310317
                 }
             }
 
-
-            qrCodeVisible = false;
+            // TODO der QR Code wird jetzt nur einmal erkannt pro Szene
+            // qrCodeVisible = false;
             Emgu.CV.Mat gray = new Mat();
             CvInvoke.CvtColor(inputimage, gray, Emgu.CV.CvEnum.ColorConversion.Bgr2Gray);
             
@@ -280,6 +294,9 @@ namespace DoitRobo310317
                 }
 
             }
+
+
+
 
             // Hier werden alle Marker ausgewertet
             if (markerslist.Count >= 3)
@@ -397,30 +414,8 @@ namespace DoitRobo310317
                 Mat transformMat = CvInvoke.GetPerspectiveTransform(convertToPointF(cornerssort), dstPoints);
                 CvInvoke.WarpPerspective(inputimage, dst, transformMat, new Size(480, 480));
 
-                /*
-                 * QR-CODE DEKODIEREN
-                 */
-                try
-                {
-                    // Funktiniert mit entzerrten Bild noch nicht so wirklich
-                    RGBLuminanceSource source = new RGBLuminanceSource(inputimage.Bitmap, inputimage.Cols, inputimage.Rows);
-                    BinaryBitmap candidate = new BinaryBitmap(new HybridBinarizer(source));
-                    Result result = reader.decode(candidate, decoderhints);
 
-                    tbQR.Text = result.Text;
-                    qrCodeVisible = true;
-                    detectedMovement.ObjectType = "Objekt";
-                    // TODO QRCode text auswerten
-                    objectColor = "955B09";//955B09 //E6C200
 
-                }
-                catch (ReaderException ex)
-                {
-
-                    tbQR.Text = "";
-                    detectedMovement.ObjectType = "keinQR";
-                }
-                
                 /*
                 * Winkelberechnung
                 */
@@ -790,6 +785,10 @@ namespace DoitRobo310317
         private Tuple<Movement, Movement> gloveRecognized(Mat inputimage, Mat outputimage)
         {
             Mat work = inputimage.Clone();
+            Mat workViertel = new Mat((int)work.Rows / 4, (int)work.Cols / 4, work.Depth, work.NumberOfChannels);
+            CvInvoke.PyrDown(work, workViertel);
+           //CvInvoke.Resize(work, work, new Size((int)work.Rows / 4, (int)work.Cols / 4));
+            work = workViertel;
 
             CvInvoke.MedianBlur(work, work, 15);
             CvInvoke.GaussianBlur(work, work,new Size(5,5),5);
@@ -804,7 +803,7 @@ namespace DoitRobo310317
             MCvScalar mask_red_lower= new MCvScalar(0,50,50); //(0,50,50);
             MCvScalar mask_red_upper = new MCvScalar(5, 255, 255); //(13, 255, 255);
 
-            MCvScalar mask_green_lower = new MCvScalar(90, 50, 50); //(90, 50, 50);
+            MCvScalar mask_green_lower = new MCvScalar(90, 25, 50); //(90, 50, 50);
             MCvScalar mask_green_upper = new MCvScalar(135, 255, 255); //(120, 255, 255);
 
             //Maske erstellen
@@ -828,25 +827,13 @@ namespace DoitRobo310317
             CvInvoke.BitwiseOr(mask_red, mask_green, mask_Combined);
 
             BoxMaskGlove.Image = mask_Combined;
-
+            
             CvInvoke.FindContours(mask_red, red_countours, hierachy_red, Emgu.CV.CvEnum.RetrType.Tree,Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             CvInvoke.FindContours(mask_green, green_countours, hierachy_green, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
 
-            //Filtern, dass nur das größte angezeigt wird
+            //Filtern, dass nur das größte Grün angezeigt wird
 
-            //Für ROT
-            int idx_largestRed = 0;
-            double Size_largestRed = 0; // Könnte man bei Rot verbessern - auf geringster Abstand zu Grün
-            for (int i = 0; i < red_countours.Size; i++)
-            {
-               double temp= CvInvoke.ContourArea(red_countours[i]);
-                if (temp > Size_largestRed)
-                {
-                    Size_largestRed = temp;
-                    idx_largestRed = i;
-                }
 
-            }
             //FÜR GRÜN
             int idx_largestGreen = 0;
             double Size_largestGreen = 0;
@@ -861,17 +848,53 @@ namespace DoitRobo310317
 
             }
 
+            //Für ROT
+            int idx_red = -1;
+            double distance_redGreen = 9999999999999; // Könnte man bei Rot verbessern - auf geringster Abstand zu Grün
+            if (green_countours.Size > 0)
+            {
+                Rectangle rect_Green = CvInvoke.BoundingRectangle(green_countours[idx_largestGreen]);
+                Point centerGreen = new Point((rect_Green.X + rect_Green.Width / 2) * 2, (rect_Green.Y + rect_Green.Height / 2) * 2);
+                for (int i = 0; i < red_countours.Size; i++)
+                {
+                    double contourSize = CvInvoke.ContourArea(red_countours[i]);
+                    tbDebug.AppendText("\n\n Red IDX: " + i + "  Size: " + contourSize + " \n\n\n\n");
+                    if (contourSize < 5)
+                    {
+                        continue;
+                    }
+
+                    Rectangle rect_Red = CvInvoke.BoundingRectangle(red_countours[i]);
+                    
+                    Point centerRed =new Point((rect_Red.X + rect_Red.Width / 2) * 2, (rect_Red.Y + rect_Red.Height / 2) * 2);
+                    double deltax = centerRed.X - centerGreen.X;
+                    double deltay = centerRed.Y - centerGreen.Y;
+
+                    double temp = Math.Sqrt(Math.Pow(deltax,2)+Math.Pow(deltay,2));
+
+                    if (temp < distance_redGreen)
+                    {
+                        distance_redGreen = temp;
+                        idx_red = i;
+                    }
+
+                }
+            }
+            if(idx_red < 0)
+            {
+                return null;
+            }
             Movement greenMove = null;
             Movement redMove = null;
             MCvScalar redcolor = new MCvScalar(0, 0, 255);
             MCvScalar greencolor = new MCvScalar(0, 255, 0);
             if (red_countours.Size > 0)
             {
-                Rectangle rect_Red = CvInvoke.BoundingRectangle(red_countours[idx_largestRed]);
+                Rectangle rect_Red = CvInvoke.BoundingRectangle(red_countours[idx_red]);
                 CvInvoke.Rectangle(countours, rect_Red, redcolor, 1, Emgu.CV.CvEnum.LineType.AntiAlias);
-                CvInvoke.DrawContours(countours, red_countours, idx_largestRed, redcolor, 2); //ROT
-                redMove = new Movement("Red", rect_Red.X + rect_Red.Width / 2, rect_Red.Y + rect_Red.Height / 2, 0.0f);
-
+                CvInvoke.DrawContours(countours, red_countours, idx_red, redcolor, 2); //ROT
+                redMove = new Movement("Red", (rect_Red.X+ (rect_Red.Width / 2)) * 2, (rect_Red.Y + (rect_Red.Height / 2))*2, 0.0f);
+                                
                 CvInvoke.Circle(outputimage, new Point(redMove.X, redMove.Y), 3, redcolor, 3);
                 CvInvoke.PutText(outputimage, string.Format("X:{0}, Y:{1}", redMove.X, redMove.Y), new System.Drawing.Point(10, 80), Emgu.CV.CvEnum.FontFace.HersheyComplex, 0.5, redcolor);
 
@@ -882,9 +905,8 @@ namespace DoitRobo310317
                 Rectangle rect_Green = CvInvoke.BoundingRectangle(green_countours[idx_largestGreen]);
                 CvInvoke.Rectangle(countours, rect_Green, greencolor, 1, Emgu.CV.CvEnum.LineType.AntiAlias);
                 CvInvoke.DrawContours(countours, green_countours, idx_largestGreen, greencolor, 2); //GRÜN
-                greenMove = new Movement("Green", rect_Green.X + rect_Green.Width / 2, rect_Green.Y + rect_Green.Height / 2, 0.0f);
-
-
+                greenMove = new Movement("Green", (rect_Green.X + rect_Green.Width / 2)*2, (rect_Green.Y + rect_Green.Height / 2)*2, 0.0f);
+                
                 CvInvoke.Circle(outputimage, new Point(greenMove.X, greenMove.Y), 3, greencolor,3);
                 CvInvoke.PutText(outputimage, string.Format("X:{0}, Y:{1}", greenMove.X, greenMove.Y), new System.Drawing.Point(10, 110), Emgu.CV.CvEnum.FontFace.HersheyComplex, 0.5, greencolor);
 
@@ -905,7 +927,7 @@ namespace DoitRobo310317
                 CvInvoke.Circle(outputimage, new Point(centerx, centery), 3, new Bgr(Color.Brown).MCvScalar, 3);
             }
 
-            gloveBox.Image = countours;
+            //gloveBox.Image = countours;
 
             
 
@@ -959,9 +981,13 @@ namespace DoitRobo310317
             panelMode.Hide();
             this.video_capture = new Emgu.CV.VideoCapture(2);
             this.video_capture.ImageGrabbed += processFrame;
-            this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps, 10);
-            this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, 640);
-            this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, 480);
+            
+            //this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps, 10);
+            //this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, 640);
+            //this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, 480);
+            this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, 960);
+            this.video_capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, 540);
+            this.video_capture.SetCaptureProperty(CapProp.Focus, 0);
             this.video_capture.Start();
         }
 
@@ -999,7 +1025,7 @@ namespace DoitRobo310317
             {
                 classifierForm.Show();
             }
-            classifierForm.tbClassified.Clear();
+            //classifierForm.tbClassified.Clear();
             List<RobotMovement> roboMoves = new List<RobotMovement>();
 
             List<List<Movement>> groupedMovements = movements
@@ -1035,6 +1061,7 @@ namespace DoitRobo310317
                 Movement red = null;
                 Movement green = null; 
                 Movement obje = null;
+                Movement image = null;
                 double length = 0;
                 
 
@@ -1048,6 +1075,8 @@ namespace DoitRobo310317
                     {
                         greenVisible = true;
                         green = m;
+                    } else if ("image".Equals(m.ObjectType)) {
+                        image = m;
                     } else
                     {
                         objectVisible = true;
@@ -1061,7 +1090,15 @@ namespace DoitRobo310317
 
                     // Basic movement
                     RobotMovement move = new RobotMovement();
-                    move.typ = RobotMovement.MovementTyp.MOVE;
+                        // TODO Nur wenn Handschuh sich bewegt?
+                    move.typ.Add(RobotMovement.MovementTyp.MOVE);
+                    move.imagesource = new Mat();
+                    if(image != null)
+                    {
+                        move.imagesource = image.imagesource;
+                    }
+
+
                     float deltax = red.X - green.X;
                     float deltay = red.Y - green.Y;
            
@@ -1070,7 +1107,7 @@ namespace DoitRobo310317
                     float centery = (red.Y + green.Y) / 2;
                     move.x = centerx;
                     move.y = centery;
-
+                    move.a = obje.Angle;
 
                     //Erkennung von Greifer Auf/ Zu
 
@@ -1082,6 +1119,24 @@ namespace DoitRobo310317
                     if (intersect == true)
                     {
                         bool grasp = true;
+                        bool rotate = false;
+
+                        if (previousMovements.Count > 0)
+                        {
+                            Movement objeprev = null;
+                            foreach (Movement m in previousMovements)
+                            {
+                                if (String.IsNullOrEmpty(m.ObjectType))
+                                {
+                                    objeprev = m;
+                                }
+                            }
+                            if(objeprev != null && Math.Abs(obje.Angle - objeprev.Angle) > 5.0)
+                            {
+                                rotate = true;
+                            }
+
+                        }
                         double prevdistance = length;
                         // Analyse der nächsten n Frames
                         for (int i = 1; i < 2; i++)
@@ -1108,7 +1163,7 @@ namespace DoitRobo310317
                                         greenVisible = true;
                                         greenloop = m;
                                     }
-                                    else
+                                    else if (String.IsNullOrEmpty(m.ObjectType))
                                     {
                                         objectVisible = true;
                                         objeloop = m;
@@ -1128,7 +1183,7 @@ namespace DoitRobo310317
 
                                     double distance = Math.Sqrt(Math.Pow(deltax, 2) + Math.Pow(deltay, 2));
 
-                                    classifierForm.tbClassified.AppendText(String.Format("D1 {0}   D2 {1} \n\n", prevdistance - distance, length - distance));
+                                   
                                     if (loopintersect && prevdistance - distance > 0 && length - distance > 0)
                                     {
                                         grasp &= true;
@@ -1140,31 +1195,25 @@ namespace DoitRobo310317
                                     prevdistance = distance;
                                 }
 
+                                if (grasp)
+                                {
+                                    move.typ.Add(RobotMovement.MovementTyp.GRASP);
+                                }
+                                if(rotate)
+                                {
+                                    move.typ.Add(RobotMovement.MovementTyp.ROTATE);
+                                }
+
                             }
                         }
 
-                        if (grasp == true)
-                        {
-                            classifierForm.tbClassified.AppendText("Greifen \n\n");
-                        }
                     }
-
-
-
-
-
-
-
-                    classifierForm.tbClassified.AppendText(move.convert());
-                    classifierForm.tbClassified.AppendText("\n\n");
-
-
-
-
+                    roboMoves.Add(move);  
                 }
 
             }
 
+            classifierForm.UpdateMovements(roboMoves);
             return roboMoves;
         }
         //Prüfung ob Linie zwischen Rot und Grün die Objektmaske schneidet!!
@@ -1201,6 +1250,41 @@ namespace DoitRobo310317
             this.video_capture.Stop();
             this.video_capture.ImageGrabbed -= processFrame;
             classifierForm.tbClassified.Clear();
+        }
+
+        private void detectQrCode(Mat inputimage)
+        {   if (inputimage == null && CvInvoke.CountNonZero(inputimage) > 0)
+            {
+                return;
+            }
+            /*
+             * QR-CODE DEKODIEREN
+             */
+          
+                try
+                {
+                // Funktiniert mit entzerrten Bild noch nicht so wirklich
+                Bitmap bmp = inputimage.Bitmap;
+                    BitmapLuminanceSource source = new BitmapLuminanceSource(bmp);
+                    BinaryBitmap candidate = new BinaryBitmap(new HybridBinarizer(source));
+
+                    Result result = reader.decode(candidate, decoderhints);
+
+
+                    tbQR.Text = result.Text;
+                    qrCodeVisible = true;
+
+                    // TODO QRCode text auswerten
+                    objectColor = "955B09";//955B09 //E6C200
+ 
+
+                }
+                catch (ReaderException ex)
+                {
+
+                    tbQR.Text = "";
+                    
+                }
         }
     }
 

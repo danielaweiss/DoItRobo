@@ -50,3 +50,7 @@ C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\Do
 C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.exe
 C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.pdb
 C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\obj\x64\Debug\DoitRobo310317.Form2.resources
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\zxing.presentation.dll
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\zxing.xml
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\zxing.presentation.pdb
+C:\Users\danie\Google Drive\FH ITS MA\1 MA Arbeit\A CODE\April\DoitRobo310317\DoitRobo310317\bin\x64\Debug\zxing.presentation.xml
