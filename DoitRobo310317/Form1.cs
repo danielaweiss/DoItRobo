@@ -159,6 +159,7 @@ namespace DoitRobo310317
                     objectMovement.Frame = frameNumber;
                     this.movements.Add(objectMovement);
                 }
+                if (gloveMovement == null) { return; } //DANI CODE
                 Movement red = gloveMovement.Item1;
                 Movement green = gloveMovement.Item2;
                 if(red != null)
@@ -496,7 +497,7 @@ namespace DoitRobo310317
                     detectedMovement.Y = (int)cp.Cyitem;
                 }
 
-                detectedMovement.Angle = (float)lineAngle;
+                detectedMovement.Angle = (float)(lineAngle+correction);
 
                 return detectedMovement;
                 
@@ -785,6 +786,8 @@ namespace DoitRobo310317
         private Tuple<Movement, Movement> gloveRecognized(Mat inputimage, Mat outputimage)
         {
             Mat work = inputimage.Clone();
+            work.ConvertTo(work, DepthType.Default, 1, 10); //Dani Brightness nach oben gestellt
+            gloveBox.Image = work;
             Mat workViertel = new Mat((int)work.Rows / 4, (int)work.Cols / 4, work.Depth, work.NumberOfChannels);
             CvInvoke.PyrDown(work, workViertel);
            //CvInvoke.Resize(work, work, new Size((int)work.Rows / 4, (int)work.Cols / 4));
@@ -813,6 +816,18 @@ namespace DoitRobo310317
             CvInvoke.InRange(hsv, new ScalarArray(mask_red_lower), new ScalarArray(mask_red_upper), mask_red);
             CvInvoke.InRange(hsv, new ScalarArray(mask_green_lower), new ScalarArray(mask_green_upper), mask_green);
 
+            //Dani
+            Mat mask_red_upperRed = new Mat();
+            MCvScalar mask_red_upperRed_lower = new MCvScalar(170, 50, 50); //(0,50,50);
+            MCvScalar mask_red_upperRed_upper = new MCvScalar(179, 255, 255); //(13, 255, 255);
+            CvInvoke.InRange(hsv, new ScalarArray(mask_red_upperRed_lower), new ScalarArray(mask_red_upperRed_upper), mask_red_upperRed);
+
+            Mat mask_red_combined = new Mat(mask_red.Rows, mask_red.Cols, DepthType.Cv8S, 3);
+            CvInvoke.BitwiseOr(mask_red, mask_red_upperRed, mask_red_combined);
+
+
+            //Dani Ende
+
             //Kontouren erkennen
             VectorOfVectorOfPoint red_countours = new VectorOfVectorOfPoint ();
             VectorOfVectorOfPoint green_countours = new VectorOfVectorOfPoint();
@@ -824,11 +839,11 @@ namespace DoitRobo310317
 
             Mat mask_Combined = new Mat(mask_red.Rows, mask_red.Cols, DepthType.Cv8S, 3);
 
-            CvInvoke.BitwiseOr(mask_red, mask_green, mask_Combined);
+            CvInvoke.BitwiseOr(mask_red_combined, mask_green, mask_Combined);
 
             BoxMaskGlove.Image = mask_Combined;
             
-            CvInvoke.FindContours(mask_red, red_countours, hierachy_red, Emgu.CV.CvEnum.RetrType.Tree,Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.FindContours(mask_red_combined, red_countours, hierachy_red, Emgu.CV.CvEnum.RetrType.Tree,Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             CvInvoke.FindContours(mask_green, green_countours, hierachy_green, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
 
             //Filtern, dass nur das größte Grün angezeigt wird
@@ -1091,7 +1106,7 @@ namespace DoitRobo310317
                     // Basic movement
                     RobotMovement move = new RobotMovement();
                         // TODO Nur wenn Handschuh sich bewegt?
-                    move.typ.Add(RobotMovement.MovementTyp.MOVE);
+                    //move.typ.Add(RobotMovement.MovementTyp.MOVE);
                     move.imagesource = new Mat();
                     if(image != null)
                     {
@@ -1118,8 +1133,10 @@ namespace DoitRobo310317
                     
                     if (intersect == true)
                     {
-                        bool grasp = true;
+                        bool grasp = false;
                         bool rotate = false;
+                        bool release = false;
+                        bool reach = false;
 
                         if (previousMovements.Count > 0)
                         {
@@ -1131,7 +1148,7 @@ namespace DoitRobo310317
                                     objeprev = m;
                                 }
                             }
-                            if(objeprev != null && Math.Abs(obje.Angle - objeprev.Angle) > 5.0)
+                            if(objeprev != null && Math.Abs(obje.Angle - objeprev.Angle) > 1.0)//5.0
                             {
                                 rotate = true;
                             }
@@ -1181,28 +1198,46 @@ namespace DoitRobo310317
                                     float deltaxloop = redloop.X - greenloop.X;
                                     float deltayloop = redloop.Y - greenloop.Y;
 
-                                    double distance = Math.Sqrt(Math.Pow(deltax, 2) + Math.Pow(deltay, 2));
+                                    double distance = Math.Sqrt(Math.Pow(deltaxloop, 2) + Math.Pow(deltayloop, 2));
 
-                                   
-                                    if (loopintersect && prevdistance - distance > 0 && length - distance > 0)
+
+                                    // if (loopintersect && prevdistance - distance > 0 && length - distance > 5)/0
+                                    if (loopintersect && ( (prevdistance - distance) > 0 )&& length - distance > 0) //Eigentlich ist prevdist = length (daher nicht nochmal machen)
                                     {
-                                        grasp &= true;
+                                        grasp = true;
+                                        
                                     } else
                                     {
-                                        grasp = grasp & false;
+                                        grasp = false;
+                                    }
+                                    //Loslassen
+                                    if (loopintersect && ((prevdistance - distance) < 0 ))
+                                    {
+                                        release = true; 
+                                    }
+                                    else
+                                    {
+                                        release = false;
                                     }
 
                                     prevdistance = distance;
+
+                                    if (grasp)
+                                    {
+                                        move.typ.Add(RobotMovement.MovementTyp.GRASP);
+                                    }
+                                    if (rotate)
+                                    {
+                                        move.typ.Add(RobotMovement.MovementTyp.ROTATE);
+                                    }
+                                    if (release)
+                                    {
+                                        move.typ.Add(RobotMovement.MovementTyp.RELEASE);
+
+                                    }
                                 }
 
-                                if (grasp)
-                                {
-                                    move.typ.Add(RobotMovement.MovementTyp.GRASP);
-                                }
-                                if(rotate)
-                                {
-                                    move.typ.Add(RobotMovement.MovementTyp.ROTATE);
-                                }
+                                
 
                             }
                         }
@@ -1214,6 +1249,7 @@ namespace DoitRobo310317
             }
 
             classifierForm.UpdateMovements(roboMoves);
+            
             return roboMoves;
         }
         //Prüfung ob Linie zwischen Rot und Grün die Objektmaske schneidet!!
@@ -1232,14 +1268,8 @@ namespace DoitRobo310317
 
                 return CvInvoke.CountNonZero(result) > 0;
 
-
-
-
             }            
-            
-
-
-
+ 
             return intersect;
         }
 

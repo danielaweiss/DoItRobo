@@ -52,6 +52,9 @@
             this.buttonRecord = new System.Windows.Forms.Button();
             this.btNeustart = new System.Windows.Forms.Button();
             this.lbFrameCount = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gloveBox)).BeginInit();
             this.panelMode.SuspendLayout();
@@ -65,7 +68,7 @@
             // 
             this.imageBox1.Location = new System.Drawing.Point(12, 12);
             this.imageBox1.Name = "imageBox1";
-            this.imageBox1.Size = new System.Drawing.Size(1231, 806);
+            this.imageBox1.Size = new System.Drawing.Size(1566, 811);
             this.imageBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imageBox1.TabIndex = 2;
             this.imageBox1.TabStop = false;
@@ -73,7 +76,7 @@
             // lblDemo
             // 
             this.lblDemo.AutoSize = true;
-            this.lblDemo.Location = new System.Drawing.Point(688, 829);
+            this.lblDemo.Location = new System.Drawing.Point(425, 854);
             this.lblDemo.Name = "lblDemo";
             this.lblDemo.Size = new System.Drawing.Size(156, 29);
             this.lblDemo.TabIndex = 3;
@@ -91,7 +94,7 @@
             // QRCode
             // 
             this.QRCode.AutoSize = true;
-            this.QRCode.Location = new System.Drawing.Point(1301, 924);
+            this.QRCode.Location = new System.Drawing.Point(1290, 924);
             this.QRCode.Name = "QRCode";
             this.QRCode.Size = new System.Drawing.Size(215, 29);
             this.QRCode.TabIndex = 7;
@@ -102,7 +105,7 @@
             this.tbQR.Location = new System.Drawing.Point(1295, 975);
             this.tbQR.Multiline = true;
             this.tbQR.Name = "tbQR";
-            this.tbQR.Size = new System.Drawing.Size(309, 270);
+            this.tbQR.Size = new System.Drawing.Size(309, 122);
             this.tbQR.TabIndex = 8;
             // 
             // tbDebug
@@ -110,12 +113,12 @@
             this.tbDebug.Location = new System.Drawing.Point(1610, 975);
             this.tbDebug.Multiline = true;
             this.tbDebug.Name = "tbDebug";
-            this.tbDebug.Size = new System.Drawing.Size(363, 563);
+            this.tbDebug.Size = new System.Drawing.Size(363, 604);
             this.tbDebug.TabIndex = 9;
             // 
             // btDoSomething
             // 
-            this.btDoSomething.Location = new System.Drawing.Point(1263, 12);
+            this.btDoSomething.Location = new System.Drawing.Point(1594, 12);
             this.btDoSomething.Name = "btDoSomething";
             this.btDoSomething.Size = new System.Drawing.Size(223, 62);
             this.btDoSomething.TabIndex = 11;
@@ -125,7 +128,7 @@
             // 
             // gloveBox
             // 
-            this.gloveBox.Location = new System.Drawing.Point(809, 975);
+            this.gloveBox.Location = new System.Drawing.Point(812, 1309);
             this.gloveBox.Name = "gloveBox";
             this.gloveBox.Size = new System.Drawing.Size(480, 270);
             this.gloveBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -137,9 +140,9 @@
             this.lblglove.AutoSize = true;
             this.lblglove.Location = new System.Drawing.Point(804, 924);
             this.lblglove.Name = "lblglove";
-            this.lblglove.Size = new System.Drawing.Size(247, 29);
+            this.lblglove.Size = new System.Drawing.Size(80, 29);
             this.lblglove.TabIndex = 13;
-            this.lblglove.Text = "Handschuherkennung";
+            this.lblglove.Text = "Canny";
             // 
             // panelMode
             // 
@@ -178,7 +181,7 @@
             // checkBoxLoop
             // 
             this.checkBoxLoop.AutoSize = true;
-            this.checkBoxLoop.Location = new System.Drawing.Point(12, 825);
+            this.checkBoxLoop.Location = new System.Drawing.Point(52, 825);
             this.checkBoxLoop.Name = "checkBoxLoop";
             this.checkBoxLoop.Size = new System.Drawing.Size(100, 33);
             this.checkBoxLoop.TabIndex = 15;
@@ -206,7 +209,7 @@
             // 
             // BoxMaskObject
             // 
-            this.BoxMaskObject.Location = new System.Drawing.Point(304, 1268);
+            this.BoxMaskObject.Location = new System.Drawing.Point(307, 1309);
             this.BoxMaskObject.Name = "BoxMaskObject";
             this.BoxMaskObject.Size = new System.Drawing.Size(480, 270);
             this.BoxMaskObject.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -218,14 +221,14 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(299, 924);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(84, 29);
+            this.label2.Size = new System.Drawing.Size(312, 29);
             this.label2.TabIndex = 19;
-            this.label2.Text = "Maske";
+            this.label2.Text = "Maske Handschuh Rot/Grün";
             // 
             // lbStatus
             // 
             this.lbStatus.AutoSize = true;
-            this.lbStatus.Location = new System.Drawing.Point(198, 828);
+            this.lbStatus.Location = new System.Drawing.Point(12, 829);
             this.lbStatus.Name = "lbStatus";
             this.lbStatus.Size = new System.Drawing.Size(28, 29);
             this.lbStatus.TabIndex = 20;
@@ -233,7 +236,7 @@
             // 
             // qrBox
             // 
-            this.qrBox.Location = new System.Drawing.Point(809, 1268);
+            this.qrBox.Location = new System.Drawing.Point(809, 975);
             this.qrBox.Name = "qrBox";
             this.qrBox.Size = new System.Drawing.Size(480, 270);
             this.qrBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -242,7 +245,7 @@
             // 
             // buttonRecord
             // 
-            this.buttonRecord.Location = new System.Drawing.Point(533, 829);
+            this.buttonRecord.Location = new System.Drawing.Point(257, 834);
             this.buttonRecord.Name = "buttonRecord";
             this.buttonRecord.Size = new System.Drawing.Size(127, 49);
             this.buttonRecord.TabIndex = 22;
@@ -252,7 +255,7 @@
             // 
             // btNeustart
             // 
-            this.btNeustart.Location = new System.Drawing.Point(1263, 741);
+            this.btNeustart.Location = new System.Drawing.Point(1610, 742);
             this.btNeustart.Name = "btNeustart";
             this.btNeustart.Size = new System.Drawing.Size(207, 76);
             this.btNeustart.TabIndex = 24;
@@ -263,18 +266,48 @@
             // lbFrameCount
             // 
             this.lbFrameCount.AutoSize = true;
-            this.lbFrameCount.Location = new System.Drawing.Point(1311, 1280);
+            this.lbFrameCount.Location = new System.Drawing.Point(1305, 1175);
             this.lbFrameCount.Name = "lbFrameCount";
             this.lbFrameCount.Size = new System.Drawing.Size(45, 29);
             this.lbFrameCount.TabIndex = 25;
             this.lbFrameCount.Text = "0;0";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 924);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(202, 29);
+            this.label1.TabIndex = 26;
+            this.label1.Text = "QR-Code entzerrt";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(302, 1262);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(161, 29);
+            this.label3.TabIndex = 27;
+            this.label3.Text = "Maske Objekt";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(1290, 1124);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(95, 29);
+            this.label4.TabIndex = 28;
+            this.label4.Text = "Frames";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1989, 1568);
+            this.ClientSize = new System.Drawing.Size(1989, 1650);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lbFrameCount);
             this.Controls.Add(this.btNeustart);
             this.Controls.Add(this.buttonRecord);
@@ -337,6 +370,9 @@
         private System.Windows.Forms.Button buttonRecord;
         private System.Windows.Forms.Button btNeustart;
         private System.Windows.Forms.Label lbFrameCount;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }
 

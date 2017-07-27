@@ -46,26 +46,27 @@
             this.imageBoxDebug = new Emgu.CV.UI.ImageBox();
             this.btPrev = new System.Windows.Forms.Button();
             this.btNext = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.lbFrameNR = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageBoxDebug)).BeginInit();
             this.SuspendLayout();
             // 
             // tbClassified
             // 
-            this.tbClassified.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbClassified.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbClassified.Location = new System.Drawing.Point(643, 87);
+            this.tbClassified.Location = new System.Drawing.Point(863, 87);
             this.tbClassified.Multiline = true;
             this.tbClassified.Name = "tbClassified";
             this.tbClassified.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbClassified.Size = new System.Drawing.Size(620, 198);
+            this.tbClassified.Size = new System.Drawing.Size(730, 236);
             this.tbClassified.TabIndex = 24;
             // 
             // btClose
             // 
-            this.btClose.Location = new System.Drawing.Point(1148, 12);
+            this.btClose.Location = new System.Drawing.Point(1403, 12);
             this.btClose.Name = "btClose";
-            this.btClose.Size = new System.Drawing.Size(141, 52);
+            this.btClose.Size = new System.Drawing.Size(171, 52);
             this.btClose.TabIndex = 25;
             this.btClose.Text = "Schließen";
             this.btClose.UseVisualStyleBackColor = true;
@@ -74,7 +75,7 @@
             // lbXML
             // 
             this.lbXML.AutoSize = true;
-            this.lbXML.Location = new System.Drawing.Point(638, 35);
+            this.lbXML.Location = new System.Drawing.Point(858, 35);
             this.lbXML.Name = "lbXML";
             this.lbXML.Size = new System.Drawing.Size(132, 29);
             this.lbXML.TabIndex = 26;
@@ -83,7 +84,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(648, 406);
+            this.label1.Location = new System.Drawing.Point(866, 400);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(92, 29);
             this.label1.TabIndex = 27;
@@ -92,7 +93,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(648, 528);
+            this.label2.Location = new System.Drawing.Point(866, 522);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(122, 29);
             this.label2.TabIndex = 28;
@@ -101,7 +102,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(648, 347);
+            this.label3.Location = new System.Drawing.Point(866, 341);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(122, 29);
             this.label3.TabIndex = 29;
@@ -110,7 +111,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(648, 467);
+            this.label4.Location = new System.Drawing.Point(866, 461);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(116, 29);
             this.label4.TabIndex = 30;
@@ -119,7 +120,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(648, 596);
+            this.label5.Location = new System.Drawing.Point(866, 590);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(105, 29);
             this.label5.TabIndex = 31;
@@ -128,7 +129,7 @@
             // lbHinlangen
             // 
             this.lbHinlangen.AutoSize = true;
-            this.lbHinlangen.Location = new System.Drawing.Point(799, 347);
+            this.lbHinlangen.Location = new System.Drawing.Point(1017, 341);
             this.lbHinlangen.Name = "lbHinlangen";
             this.lbHinlangen.Size = new System.Drawing.Size(28, 29);
             this.lbHinlangen.TabIndex = 32;
@@ -137,7 +138,7 @@
             // lbGreifen
             // 
             this.lbGreifen.AutoSize = true;
-            this.lbGreifen.Location = new System.Drawing.Point(799, 406);
+            this.lbGreifen.Location = new System.Drawing.Point(1017, 400);
             this.lbGreifen.Name = "lbGreifen";
             this.lbGreifen.Size = new System.Drawing.Size(28, 29);
             this.lbGreifen.TabIndex = 33;
@@ -146,7 +147,7 @@
             // lbBewegen
             // 
             this.lbBewegen.AutoSize = true;
-            this.lbBewegen.Location = new System.Drawing.Point(799, 467);
+            this.lbBewegen.Location = new System.Drawing.Point(1017, 461);
             this.lbBewegen.Name = "lbBewegen";
             this.lbBewegen.Size = new System.Drawing.Size(28, 29);
             this.lbBewegen.TabIndex = 34;
@@ -155,7 +156,7 @@
             // lbLoslassen
             // 
             this.lbLoslassen.AutoSize = true;
-            this.lbLoslassen.Location = new System.Drawing.Point(799, 528);
+            this.lbLoslassen.Location = new System.Drawing.Point(1017, 522);
             this.lbLoslassen.Name = "lbLoslassen";
             this.lbLoslassen.Size = new System.Drawing.Size(28, 29);
             this.lbLoslassen.TabIndex = 35;
@@ -164,7 +165,7 @@
             // lbDrehung
             // 
             this.lbDrehung.AutoSize = true;
-            this.lbDrehung.Location = new System.Drawing.Point(799, 596);
+            this.lbDrehung.Location = new System.Drawing.Point(1017, 590);
             this.lbDrehung.Name = "lbDrehung";
             this.lbDrehung.Size = new System.Drawing.Size(28, 29);
             this.lbDrehung.TabIndex = 36;
@@ -173,7 +174,7 @@
             // lbWinkel
             // 
             this.lbWinkel.AutoSize = true;
-            this.lbWinkel.Location = new System.Drawing.Point(858, 596);
+            this.lbWinkel.Location = new System.Drawing.Point(1076, 590);
             this.lbWinkel.Name = "lbWinkel";
             this.lbWinkel.Size = new System.Drawing.Size(86, 29);
             this.lbWinkel.TabIndex = 37;
@@ -183,14 +184,14 @@
             // 
             this.imageBoxDebug.Location = new System.Drawing.Point(12, 87);
             this.imageBoxDebug.Name = "imageBoxDebug";
-            this.imageBoxDebug.Size = new System.Drawing.Size(625, 538);
+            this.imageBoxDebug.Size = new System.Drawing.Size(828, 464);
             this.imageBoxDebug.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imageBoxDebug.TabIndex = 2;
             this.imageBoxDebug.TabStop = false;
             // 
             // btPrev
             // 
-            this.btPrev.Location = new System.Drawing.Point(16, 656);
+            this.btPrev.Location = new System.Drawing.Point(12, 578);
             this.btPrev.Name = "btPrev";
             this.btPrev.Size = new System.Drawing.Size(204, 76);
             this.btPrev.TabIndex = 38;
@@ -200,7 +201,7 @@
             // 
             // btNext
             // 
-            this.btNext.Location = new System.Drawing.Point(433, 656);
+            this.btNext.Location = new System.Drawing.Point(636, 578);
             this.btNext.Name = "btNext";
             this.btNext.Size = new System.Drawing.Size(204, 76);
             this.btNext.TabIndex = 39;
@@ -208,12 +209,32 @@
             this.btNext.UseVisualStyleBackColor = true;
             this.btNext.Click += new System.EventHandler(this.btNext_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(11, 35);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(83, 29);
+            this.label6.TabIndex = 40;
+            this.label6.Text = "Frame";
+            // 
+            // lbFrameNR
+            // 
+            this.lbFrameNR.AutoSize = true;
+            this.lbFrameNR.Location = new System.Drawing.Point(115, 35);
+            this.lbFrameNR.Name = "lbFrameNR";
+            this.lbFrameNR.Size = new System.Drawing.Size(26, 29);
+            this.lbFrameNR.TabIndex = 41;
+            this.lbFrameNR.Text = "0";
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1301, 929);
+            this.ClientSize = new System.Drawing.Size(1605, 744);
             this.ControlBox = false;
+            this.Controls.Add(this.lbFrameNR);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.btNext);
             this.Controls.Add(this.btPrev);
             this.Controls.Add(this.imageBoxDebug);
@@ -258,5 +279,7 @@
         private Emgu.CV.UI.ImageBox imageBoxDebug;
         private System.Windows.Forms.Button btPrev;
         private System.Windows.Forms.Button btNext;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lbFrameNR;
     }
 }
