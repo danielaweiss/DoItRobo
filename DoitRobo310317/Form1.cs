@@ -1049,7 +1049,9 @@ namespace DoitRobo310317
             .OrderBy(lm => lm.First().Frame)
             .ToList();
 
-            int processableFrames = groupedMovements.Where(e => e.Count() == 3).Count();
+            int processableFrames = groupedMovements.Where(e => e.Count() > 3).Count();
+
+            groupedMovements = groupedMovements.Where(e => e.Count() > 3).ToList();
 
             lbFrameCount.Text = String.Format("{0};{1}", frameCount, processableFrames);
 
@@ -1098,19 +1100,46 @@ namespace DoitRobo310317
                         obje = m;
                     }
                 }
-             
+                Movement redPrev = null;
+                Movement greenPrev = null;
+                Movement objePrev = null;
+                Movement imagePrev = null;
+
+                foreach (Movement m in previousMovements)
+                {
+                    if ("Red".Equals(m.ObjectType))
+                    {
+                        redVisible = true;
+                        redPrev = m;
+                    }
+                    else if ("Green".Equals(m.ObjectType))
+                    {
+                        greenVisible = true;
+                        greenPrev = m;
+                    }
+                    else if ("image".Equals(m.ObjectType))
+                    {
+                        imagePrev = m;
+                    }
+                    else
+                    {
+                        objectVisible = true;
+                        objePrev = m;
+                    }
+                }
+
                 if (redVisible && greenVisible && objectVisible)
                 {
                     // Start classification
 
                     // Basic movement
                     RobotMovement move = new RobotMovement();
-                        // TODO Nur wenn Handschuh sich bewegt?
-                    //move.typ.Add(RobotMovement.MovementTyp.MOVE);
+                    
                     move.imagesource = new Mat();
                     if(image != null)
                     {
                         move.imagesource = image.imagesource;
+                        move.frameNumber = image.Frame;
                     }
 
 
@@ -1124,19 +1153,60 @@ namespace DoitRobo310317
                     move.y = centery;
                     move.a = obje.Angle;
 
-                    //Erkennung von Greifer Auf/ Zu
-
                     //Prüfung ob Linie zwischen Rot und Grün die Objektmaske schneidet!!
+                     bool intersect = intersection(red, green, obje);
 
-                    bool intersect = intersection(red, green, obje);
 
-                    
+                    double distanceHOdeltax = 0;
+                    double distanceHOdeltay = 0;
+                    double distanceHO = 0;
+
+                    distanceHOdeltax = centerx - obje.X;
+                    distanceHOdeltay = centery - obje.Y;
+                    distanceHO = Math.Sqrt(Math.Pow(distanceHOdeltax, 2) + Math.Pow(distanceHOdeltay, 2));
+                    bool reach = false;
+                    //Hinlangen
+                    if (intersect == false)
+                    {
+                        if (redPrev != null && greenPrev != null && objePrev != null)
+                        {
+
+                            //previous Center Handschuh
+                            float deltaxPrev = redPrev.X - greenPrev.X;
+                            float deltayPrev = redPrev.Y - greenPrev.Y;
+
+                            length = Math.Sqrt(Math.Pow(deltax, 2) + Math.Pow(deltay, 2));
+                            float centerxPrev = (redPrev.X + greenPrev.X) / 2;
+                            float centeryPrev = (redPrev.Y + greenPrev.Y) / 2;
+
+                            double distanceHOdeltaxPrev = 0;
+                            double distanceHOdeltayPrev = 0;
+                            double distanceHOPrev = 0;
+
+                            distanceHOdeltaxPrev = centerxPrev - objePrev.X;
+                            distanceHOdeltayPrev = centeryPrev - objePrev.Y;
+                            distanceHOPrev = Math.Sqrt(Math.Pow(distanceHOdeltaxPrev, 2) + Math.Pow(distanceHOdeltayPrev, 2));
+
+                            if ((distanceHOPrev - distanceHO) > 0 && (distanceHOPrev - distanceHO) < 200)
+                            {
+                                reach = true;
+                                move.typ.Add(RobotMovement.MovementTyp.REACH);
+
+                            }
+                           
+
+                        }
+                    }
+
+
+
                     if (intersect == true)
                     {
                         bool grasp = false;
                         bool rotate = false;
                         bool release = false;
-                        bool reach = false;
+                       
+                        bool moving = false;
 
                         if (previousMovements.Count > 0)
                         {
@@ -1148,10 +1218,16 @@ namespace DoitRobo310317
                                     objeprev = m;
                                 }
                             }
-                            if(objeprev != null && Math.Abs(obje.Angle - objeprev.Angle) > 1.0)//5.0
+                            if(objeprev != null && Math.Abs(obje.Angle - objeprev.Angle) > 0.7)//5.0
                             {
                                 rotate = true;
                             }
+                            //Bewegung anzeigen, sobald sich der Winkel minimal ändert!!
+                            if (objeprev != null && Math.Abs(obje.Angle - objeprev.Angle) > 0.0)
+                            {
+                                moving = true;
+                            }
+
 
                         }
                         double prevdistance = length;
@@ -1201,19 +1277,24 @@ namespace DoitRobo310317
                                     double distance = Math.Sqrt(Math.Pow(deltaxloop, 2) + Math.Pow(deltayloop, 2));
 
 
-                                    // if (loopintersect && prevdistance - distance > 0 && length - distance > 5)/0
-                                    if (loopintersect && ( (prevdistance - distance) > 0 )&& length - distance > 0) //Eigentlich ist prevdist = length (daher nicht nochmal machen)
+                                    
+                                    if (loopintersect && ( (prevdistance - distance) > 5 )&& length - distance > 0) //Eigentlich ist prevdist = length (daher nicht nochmal machen)
                                     {
-                                        grasp = true;
-                                        
+                                        if (rotate != true && release != true)
+                                        {
+                                            grasp = true;
+                                        }
                                     } else
                                     {
                                         grasp = false;
                                     }
                                     //Loslassen
-                                    if (loopintersect && ((prevdistance - distance) < 0 ))
+                                    if (loopintersect && ((prevdistance - distance) < -4 ))
                                     {
-                                        release = true; 
+                                        if (rotate != true)
+                                        {
+                                            release = true;
+                                        }
                                     }
                                     else
                                     {
@@ -1225,6 +1306,7 @@ namespace DoitRobo310317
                                     if (grasp)
                                     {
                                         move.typ.Add(RobotMovement.MovementTyp.GRASP);
+                                        move.timestamp = 1;
                                     }
                                     if (rotate)
                                     {
@@ -1235,10 +1317,12 @@ namespace DoitRobo310317
                                         move.typ.Add(RobotMovement.MovementTyp.RELEASE);
 
                                     }
+                                    if (moving)
+                                    {
+                                        move.typ.Add(RobotMovement.MovementTyp.MOVE);
+
+                                    }
                                 }
-
-                                
-
                             }
                         }
 
@@ -1290,20 +1374,20 @@ namespace DoitRobo310317
             /*
              * QR-CODE DEKODIEREN
              */
-          
-                try
-                {
+
+            try
+            {
                 // Funktiniert mit entzerrten Bild noch nicht so wirklich
                 Bitmap bmp = inputimage.Bitmap;
-                    BitmapLuminanceSource source = new BitmapLuminanceSource(bmp);
-                    BinaryBitmap candidate = new BinaryBitmap(new HybridBinarizer(source));
+                BitmapLuminanceSource source = new BitmapLuminanceSource(bmp);
+                BinaryBitmap candidate = new BinaryBitmap(new HybridBinarizer(source));
 
-                    Result result = reader.decode(candidate, decoderhints);
+                Result result = reader.decode(candidate, decoderhints);
+                if (result != null) { 
 
-
-                    tbQR.Text = result.Text;
-                    qrCodeVisible = true;
-
+                tbQR.Text = result.Text;
+                qrCodeVisible = true;
+            }
                     // TODO QRCode text auswerten
                     objectColor = "955B09";//955B09 //E6C200
  

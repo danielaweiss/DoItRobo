@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.tbClassified = new System.Windows.Forms.TextBox();
             this.btClose = new System.Windows.Forms.Button();
             this.lbXML = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -48,23 +47,13 @@
             this.btNext = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.lbFrameNR = new System.Windows.Forms.Label();
+            this.tbClassified = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.imageBoxDebug)).BeginInit();
             this.SuspendLayout();
             // 
-            // tbClassified
-            // 
-            this.tbClassified.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbClassified.Location = new System.Drawing.Point(863, 87);
-            this.tbClassified.Multiline = true;
-            this.tbClassified.Name = "tbClassified";
-            this.tbClassified.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbClassified.Size = new System.Drawing.Size(730, 236);
-            this.tbClassified.TabIndex = 24;
-            // 
             // btClose
             // 
-            this.btClose.Location = new System.Drawing.Point(1403, 12);
+            this.btClose.Location = new System.Drawing.Point(1593, 12);
             this.btClose.Name = "btClose";
             this.btClose.Size = new System.Drawing.Size(171, 52);
             this.btClose.TabIndex = 25;
@@ -227,12 +216,24 @@
             this.lbFrameNR.TabIndex = 41;
             this.lbFrameNR.Text = "0";
             // 
+            // tbClassified
+            // 
+            this.tbClassified.Location = new System.Drawing.Point(863, 87);
+            this.tbClassified.Multiline = true;
+            this.tbClassified.Name = "tbClassified";
+            this.tbClassified.Size = new System.Drawing.Size(901, 239);
+            this.tbClassified.TabIndex = 42;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1605, 744);
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.ClientSize = new System.Drawing.Size(1816, 676);
             this.ControlBox = false;
+            this.Controls.Add(this.tbClassified);
             this.Controls.Add(this.lbFrameNR);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.btNext);
@@ -251,8 +252,10 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lbXML);
             this.Controls.Add(this.btClose);
-            this.Controls.Add(this.tbClassified);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "Form2";
+            this.ShowIcon = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Klassifizierung";
             ((System.ComponentModel.ISupportInitialize)(this.imageBoxDebug)).EndInit();
             this.ResumeLayout(false);
@@ -261,8 +264,6 @@
         }
 
         #endregion
-
-        public System.Windows.Forms.TextBox tbClassified;
         private System.Windows.Forms.Button btClose;
         private System.Windows.Forms.Label lbXML;
         private System.Windows.Forms.Label label1;
@@ -281,5 +282,6 @@
         private System.Windows.Forms.Button btNext;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label lbFrameNR;
+        public System.Windows.Forms.TextBox tbClassified;
     }
 }

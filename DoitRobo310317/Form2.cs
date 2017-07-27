@@ -50,6 +50,11 @@ namespace DoitRobo310317
             lbBewegen.ForeColor = Color.Red;
             lbDrehung.ForeColor = Color.Red;
             lbLoslassen.ForeColor = Color.Red;
+
+            lbFrameNR.Text = "" + Robomoves[idx].frameNumber;
+
+            lbWinkel.Text = String.Format("{0:F2}", Robomoves[idx].a);
+
             foreach (RobotMovement.MovementTyp t in Robomoves[idx].typ)
             {
 

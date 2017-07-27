@@ -17,6 +17,7 @@ namespace DoitRobo310317
         public RobotMovement()
         {
             this.typ = new List<MovementTyp>();
+            this.frameNumber = -1;
         }
 
         public float x { get; set; }
@@ -34,6 +35,7 @@ namespace DoitRobo310317
         public List<MovementTyp> typ { get; set; }
               
         public Mat imagesource { get; set; }
+        public int frameNumber { get; set; }
 
         private static String template = 
 @"<Sen Type=""DoIt"">
