@@ -1156,7 +1156,9 @@ namespace DoitRobo310317
                     //Prüfung ob Linie zwischen Rot und Grün die Objektmaske schneidet!!
                      bool intersect = intersection(red, green, obje);
 
-
+                    /************************
+                     * Hinlangen
+                     * **********************/
                     double distanceHOdeltax = 0;
                     double distanceHOdeltay = 0;
                     double distanceHO = 0;
@@ -1165,7 +1167,7 @@ namespace DoitRobo310317
                     distanceHOdeltay = centery - obje.Y;
                     distanceHO = Math.Sqrt(Math.Pow(distanceHOdeltax, 2) + Math.Pow(distanceHOdeltay, 2));
                     bool reach = false;
-                    //Hinlangen
+                   
                     if (intersect == false)
                     {
                         if (redPrev != null && greenPrev != null && objePrev != null)
@@ -1218,11 +1220,17 @@ namespace DoitRobo310317
                                     objeprev = m;
                                 }
                             }
-                            if(objeprev != null && Math.Abs(obje.Angle - objeprev.Angle) > 0.7)//5.0
+                            /************************
+                             * Drehung
+                             * **********************/
+                            if (objeprev != null && Math.Abs(obje.Angle - objeprev.Angle) > 0.7)//5.0
                             {
                                 rotate = true;
                             }
-                            //Bewegung anzeigen, sobald sich der Winkel minimal ändert!!
+                             /************************
+                             * Bewegung 
+                             * anzeigen, sobald sich der Winkel minimal ändert!!
+                             * **********************/
                             if (objeprev != null && Math.Abs(obje.Angle - objeprev.Angle) > 0.0)
                             {
                                 moving = true;
@@ -1230,6 +1238,9 @@ namespace DoitRobo310317
 
 
                         }
+                        /************************
+                         * Greifen
+                         * **********************/
                         double prevdistance = length;
                         // Analyse der nächsten n Frames
                         for (int i = 1; i < 2; i++)
@@ -1288,7 +1299,9 @@ namespace DoitRobo310317
                                     {
                                         grasp = false;
                                     }
-                                    //Loslassen
+                                    /************************
+                                     * Loslassen
+                                    * **********************/
                                     if (loopintersect && ((prevdistance - distance) < -4 ))
                                     {
                                         if (rotate != true)
